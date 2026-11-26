@@ -37,3 +37,6 @@ internal/
 agent-docs/
 datasets/
 test-photos/
+
+# local reference material (UI guides, component catalogs, rulebook)
+ref/
