@@ -1,0 +1,39 @@
+# secrets
+local.properties
+.env
+.env.*
+*.jks
+*.keystore
+google-services.json
+
+# android / gradle
+.gradle/
+build/
+*/build/
+.idea/
+*.iml
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# node / web
+node_modules/
+dist/
+.vercel/
+.netlify/
+
+# os / editor
+.DS_Store
+Thumbs.db
+*.log
+
+# project (local working files and data)
+AGENTS.md
+GIT_WORKFLOW.md
+SETUP_NOTES_not_for_repo.md
+internal/
+agent-docs/
+datasets/
+test-photos/
