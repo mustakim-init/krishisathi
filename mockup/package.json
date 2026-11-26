@@ -1,0 +1,27 @@
+{
+  "name": "krishisathi-mockup",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Round 1 clickable prototype for KrishiSathi, built with Material 3 Expressive web components.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "material": "^3.16.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^7.0.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}
