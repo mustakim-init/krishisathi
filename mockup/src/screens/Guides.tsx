@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Card } from "material/react";
 import { ICONS } from "../icons";
 import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
+import { toBangla } from "../format";
 
 type Stage = {
   id: string;
@@ -70,10 +71,13 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
         </div>
       </div>
 
-      <p className="lede">ধাপে ধাপে ছোট পরামর্শ। যেকোনো ধাপে চাপ দিয়ে বিস্তারিত দেখুন।</p>
+      <p className="lede">
+        ধানের জীবন শুরু থেকে শেষ পর্যন্ত ছয়টি ধাপে ভাগ করা। যেকোনো ধাপে চাপ দিলে তিনটি ছোট কাজ দেখতে
+        পাবেন।
+      </p>
 
       <div className="stages">
-        {STAGES.map((stage) => {
+        {STAGES.map((stage, index) => {
           const isOpen = open === stage.id;
           return (
             <Card key={stage.id} variant="filled" className="stage">
@@ -83,6 +87,9 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
                 aria-expanded={isOpen}
                 onClick={() => setOpen(isOpen ? null : stage.id)}
               >
+                <span className="stage__num" aria-hidden="true">
+                  {toBangla(index + 1)}
+                </span>
                 <span className="stage__text">
                   <span className="stage__title">{stage.title}</span>
                   <span className="stage__summary">{stage.summary}</span>
