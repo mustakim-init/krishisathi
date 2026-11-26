@@ -60,7 +60,23 @@ KrishiSathi supports UN Sustainable Development Goal 2, mainly Target 2.4 (farmi
 
 ## How to run it
 
-The Round 1 prototype is plain HTML, CSS and JavaScript in `mockup/`, with no build step and no dependencies. Open `mockup/index.html` in a browser, or use the deployed link above. On a desktop it is meant to be viewed inside a phone frame; it is designed for a 360–412 px wide screen.
+The Round 1 prototype is in `mockup/`. It is a small React app written in TypeScript and built with Vite, using Material 3 web components and a self-hosted copy of the Bangla font Hind Siliguri. The build output is plain static files, so hosting it needs no server.
+
+```
+cd mockup
+npm install
+npm run dev       # opens the prototype at http://localhost:5173
+```
+
+To produce the files that get deployed:
+
+```
+cd mockup
+npm run build     # type-checks the code, then writes static files to mockup/dist/
+npm run preview   # serves the built files so they can be checked before deploying
+```
+
+Building needs Node 20.19 or newer, or 22.12 and newer. `mockup/dist/` and `mockup/node_modules/` are generated and are not in the repository. On a desktop the prototype is meant to be viewed inside a phone frame; it is designed for a 360–412 px wide screen.
 
 The Android app does not exist yet. When it does, this section will say how to open it in Android Studio and where to put the API key, which lives in `local.properties` and is never committed.
 
@@ -73,6 +89,7 @@ This is the full list of AI tools used on this project. Nothing is hidden from t
 | Claude (Anthropic) | Research, planning, drafting documents | Draft output is read and corrected by a team member before it is committed |
 | ChatGPT (OpenAI) | Brainstorming, drafting documents | Draft output is read and corrected by a team member before it is committed |
 | OpenCode with DeepSeek V4.1 Flash Free | Coding assistant: repository setup, writing and editing project documentation | Draft output is read and corrected by a team member before it is committed |
+| Codebuff (Freebuff) | Coding assistant: building the Round 1 prototype, editing the README and preparing commits | Draft output is read and corrected by a team member before it is committed |
 
 Speech recognition and text-to-speech models have not been chosen yet. The voice we pick will be listed here with its licence and cost, because some Bangla voices are free for non-commercial use only.
 
@@ -80,7 +97,18 @@ No images or video have been made with AI. If we use any, they will carry a visi
 
 ## Open-source libraries
 
-None yet. The Round 1 prototype uses no libraries. Every library added to the Android app will be listed here with its licence.
+Everything the Round 1 prototype uses, with its licence. All of these are general-purpose tools and libraries; none of them is a farming or AI service.
+
+| Library | Version | Licence | What it does here |
+|---|---|---|---|
+| [React](https://react.dev) and React DOM | 19.3 | MIT | Draws the screens and keeps their state |
+| [Material 3 web components](https://md3.io) (`material`) | 3.16 | MIT | Buttons, cards, dialogs, navigation bar, progress bar and checkboxes |
+| [Vite](https://vite.dev) | 7.3 | MIT | Development server and the production build |
+| [TypeScript](https://www.typescriptlang.org) | 5.9 | Apache-2.0 | Type checking during the build; it is not shipped to the browser |
+| [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react) | 5.2 | MIT | Build-time support for React |
+| [Hind Siliguri](https://fonts.google.com/specimen/Hind+Siliguri), Indian Type Foundry | 400, 600, 700 | SIL Open Font License 1.1 | The Bangla typeface, stored in `mockup/public/fonts/` together with its licence file |
+
+Every library added to the Android app will be listed here in the same way.
 
 ## Datasets
 
