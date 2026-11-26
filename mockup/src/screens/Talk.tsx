@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Fab, IconButton } from "material/react";
 import { ICONS } from "../icons";
 import { PhoneHeader } from "../components/PhoneHeader";
+import { buzz } from "../settings";
 import {
   DEMO_ANSWER,
   FOLLOW_UP_ONE,
@@ -26,6 +27,8 @@ export default function Talk({ onResult }: { onResult: () => void }) {
 
   const endRef = useRef<HTMLDivElement>(null);
   const alive = useRef(true);
+  /** Every reply and cancel bumps this token, so a pending scripted step stops. */
+  const run = useRef(0);
   const nextId = useRef(1);
 
   useEffect(() => {
@@ -37,53 +40,81 @@ export default function Talk({ onResult }: { onResult: () => void }) {
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages, typing, composing]);
+  }, [messages, typing, composing, step]);
 
   const push = (role: ChatMessage["role"], text: string) => {
     setMessages((current) => [...current, { id: nextId.current++, role, text }]);
   };
 
-  const aiSay = async (text: string) => {
+  const aiSay = async (token: number, text: string) => {
     setTyping(true);
     await wait(800);
-    if (!alive.current) return;
+    if (!alive.current || token !== run.current) return;
     setTyping(false);
     push("ai", text);
   };
 
   const start = async () => {
     if (phase !== "idle" || step !== 0) return;
+    const token = ++run.current;
+    buzz(20);
     setPhase("listening");
     await wait(1500);
-    if (!alive.current) return;
+    if (!alive.current || token !== run.current) return;
     push("farmer", OPENING_QUESTION);
     setPhase("thinking");
-    await aiSay(FOLLOW_UP_ONE.text);
+    await aiSay(token, FOLLOW_UP_ONE.text);
+    if (!alive.current || token !== run.current) return;
     setPhase("idle");
     setStep(1);
   };
 
+  const stop = () => {
+    run.current += 1;
+    buzz(12);
+    setPhase("idle");
+    setTyping(false);
+  };
+
   const reply = async (text: string) => {
-    if (phase !== "idle" || step === 0) return;
+    if (phase !== "idle" || step === 0 || step > 3) return;
+    const token = ++run.current;
     push("farmer", text);
     setPhase("thinking");
 
     if (step === 1) {
-      await aiSay(FOLLOW_UP_TWO.text);
-      setStep(2);
+      await aiSay(token, FOLLOW_UP_TWO.text);
+      if (token === run.current) setStep(2);
     } else if (step === 2) {
-      await aiSay(FOLLOW_UP_THREE.text);
-      setStep(3);
+      await aiSay(token, FOLLOW_UP_THREE.text);
+      if (token === run.current) setStep(3);
     } else if (step === 3) {
-      await aiSay(DEMO_ANSWER.summary);
-      setStep(4);
+      await aiSay(token, DEMO_ANSWER.summary);
+      if (token === run.current) setStep(4);
     }
 
+    if (alive.current && token === run.current) setPhase("idle");
+  };
+
+  const restart = () => {
+    run.current += 1;
+    setMessages([]);
+    setTyping(false);
     setPhase("idle");
+    setStep(0);
+    setDraft("");
+    setComposing(false);
+    setPlaying(null);
   };
 
   const replies =
-    step === 1 ? FOLLOW_UP_ONE.replies : step === 2 ? FOLLOW_UP_TWO.replies : step === 3 ? FOLLOW_UP_THREE.replies : [];
+    step === 1
+      ? FOLLOW_UP_ONE.replies
+      : step === 2
+        ? FOLLOW_UP_TWO.replies
+        : step === 3
+          ? FOLLOW_UP_THREE.replies
+          : [];
 
   const submitDraft = () => {
     const text = draft.trim();
@@ -92,6 +123,15 @@ export default function Talk({ onResult }: { onResult: () => void }) {
     setComposing(false);
     void reply(text);
   };
+
+  const stateLabel =
+    phase === "listening"
+      ? "শুনছি... এখন বলুন"
+      : phase === "thinking"
+        ? "ভাবছি..."
+        : step === 0
+          ? "চাপ দিয়ে কথা বলুন"
+          : "উত্তর বেছে নিন";
 
   return (
     <section className="view view--talk">
@@ -117,7 +157,10 @@ export default function Talk({ onResult }: { onResult: () => void }) {
                 className={`bubble__speak ${playing === message.id ? "is-playing" : ""}`}
                 onClick={() => {
                   setPlaying(message.id);
-                  window.setTimeout(() => setPlaying((current) => (current === message.id ? null : current)), 1600);
+                  window.setTimeout(
+                    () => setPlaying((current) => (current === message.id ? null : current)),
+                    1600,
+                  );
                 }}
                 aria-label="উত্তরটি শুনুন"
               >
@@ -129,7 +172,7 @@ export default function Talk({ onResult }: { onResult: () => void }) {
         ))}
 
         {typing && (
-          <div className="bubble bubble--ai bubble--typing">
+          <div className="bubble bubble--ai bubble--typing" aria-label="উত্তর তৈরি হচ্ছে">
             <span className="dot" />
             <span className="dot" />
             <span className="dot" />
@@ -151,7 +194,7 @@ export default function Talk({ onResult }: { onResult: () => void }) {
       </div>
 
       {replies.length > 0 && phase === "idle" && (
-        <div className="chips-row">
+        <div className="chips-row" role="group" aria-label="উত্তর বাছুন">
           {replies.map((option) => (
             <Button key={option} variant="outlined" size="m" onClick={() => void reply(option)}>
               {option}
@@ -160,7 +203,14 @@ export default function Talk({ onResult }: { onResult: () => void }) {
         </div>
       )}
 
-      {composing ? (
+      {step === 4 ? (
+        <div className="mic-hero">
+          <p className="mic-hero__state">ডেমো কথোপকথন শেষ</p>
+          <Button variant="outlined" size="m" icon={ICONS.mic} onClick={restart}>
+            আবার শুরু করুন
+          </Button>
+        </div>
+      ) : composing ? (
         <form
           className="composer"
           onSubmit={(event) => {
@@ -185,18 +235,21 @@ export default function Talk({ onResult }: { onResult: () => void }) {
               variant="primary"
               size="large"
               icon={phase === "listening" ? ICONS.close : ICONS.mic}
-              ariaLabel={phase === "listening" ? "থামুন" : "কথা বলুন"}
-              onClick={() => void start()}
+              ariaLabel={phase === "listening" ? "শোনা বন্ধ করুন" : "কথা বলুন"}
+              onClick={() => {
+                if (phase === "listening") stop();
+                else if (phase === "idle") void start();
+              }}
             />
           </div>
-          <p className="mic-hero__state">
-            {phase === "listening" ? "শুনছি..." : phase === "thinking" ? "ভাবছি..." : step === 0 ? "কথা বলুন" : "আরও বলুন"}
-          </p>
-          <Button variant="text" size="xs" onClick={() => setComposing(true)}>
+          <p className="mic-hero__state">{stateLabel}</p>
+          <Button variant="text" size="s" onClick={() => setComposing(true)}>
             লিখে বলুন
           </Button>
         </div>
       )}
+
+      <p className="talk-note">ডেমো কথোপকথন · সত্যিকারের রোগ নির্ণয় নয়</p>
     </section>
   );
 }

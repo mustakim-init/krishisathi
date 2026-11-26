@@ -26,6 +26,32 @@ export const FOLLOW_UP_THREE = {
   replies: ["হ্যাঁ", "না"],
 };
 
+/** What the farmer chose before the photo was analysed. */
+export type CaseAnswers = {
+  age: string;
+  standingWater: string;
+};
+
+export const DEFAULT_ANSWERS: CaseAnswers = { age: "৪৫ দিন", standingWater: "হ্যাঁ" };
+
+/** The short ask-back questions the app needs before it can answer. */
+export const PHOTO_QUESTIONS: ReadonlyArray<{
+  key: keyof CaseAnswers;
+  question: string;
+  options: readonly string[];
+}> = [
+  {
+    key: "age",
+    question: "ধানের বয়স কত দিন?",
+    options: ["৩০ দিন", "৪৫ দিন", "৬০ দিন"],
+  },
+  {
+    key: "standingWater",
+    question: "জমিতে পানি জমে আছে?",
+    options: ["হ্যাঁ", "না"],
+  },
+];
+
 export const DEMO_ANSWER = {
   headline: "সম্ভাব্য সমস্যা: বাদামি দাগ রোগ",
   confidence: "সম্ভাবনা মাঝারি",
