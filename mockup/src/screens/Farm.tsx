@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Button, Card, Checkbox, Progress } from "material/react";
+import { BottomSheet, Button, Card, Checkbox, Progress } from "material/react";
 import { ICONS } from "../icons";
 import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
+import { toBangla } from "../format";
+import Overlay from "../components/Overlay";
 
 const TASKS = [
   "জমিতে পানি জমে আছে কি না দেখুন",
@@ -14,17 +16,26 @@ const REMINDERS = [
   { title: "কৃষি অফিসে যাবেন", when: "শুক্রবার" },
 ];
 
-const EXPENSES = [
+const RECENT_EXPENSES = [
   { title: "বীজ", amount: "১,২০০" },
   { title: "সেচ", amount: "৮০০" },
 ];
 
+const ALL_EXPENSES = [
+  ...RECENT_EXPENSES,
+  { title: "সার", amount: "১,৫০০" },
+  { title: "শ্রমিক", amount: "২,৫০০" },
+];
+
 export default function Farm({ onBack }: { onBack: () => void }) {
   const [done, setDone] = useState<boolean[]>([false, false, false]);
+  const [ledger, setLedger] = useState(false);
 
   const toggle = (index: number, checked: boolean) => {
     setDone((current) => current.map((value, i) => (i === index ? checked : value)));
   };
+
+  const finished = done.filter(Boolean).length;
 
   return (
     <section className="view">
@@ -54,7 +65,12 @@ export default function Farm({ onBack }: { onBack: () => void }) {
       </Card>
 
       <section className="block">
-        <h2 className="block__title">এখন কী করবেন</h2>
+        <div className="block__head">
+          <h2 className="block__title">আজকের কাজ</h2>
+          <span className="block__meta">
+            {toBangla(finished)} / {toBangla(TASKS.length)} শেষ
+          </span>
+        </div>
         <Card variant="filled" className="panel panel--tight">
           {TASKS.map((task, index) => (
             <Checkbox
@@ -75,7 +91,11 @@ export default function Farm({ onBack }: { onBack: () => void }) {
         <div className="reminders">
           {REMINDERS.map((item) => (
             <div key={item.title} className="reminder">
-              <span className="reminder__icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.calendar }} />
+              <span
+                className="reminder__icon"
+                aria-hidden="true"
+                dangerouslySetInnerHTML={{ __html: ICONS.calendar }}
+              />
               <div>
                 <p className="reminder__title">{item.title}</p>
                 <p className="reminder__when">{item.when}</p>
@@ -88,12 +108,12 @@ export default function Farm({ onBack }: { onBack: () => void }) {
       <section className="block">
         <div className="block__head">
           <h2 className="block__title">খরচের খাতা</h2>
-          <Button variant="text" size="s" onClick={() => undefined}>
+          <Button variant="text" size="m" onClick={() => setLedger(true)}>
             সব দেখুন
           </Button>
         </div>
         <Card variant="filled" className="panel panel--tight">
-          {EXPENSES.map((item) => (
+          {RECENT_EXPENSES.map((item) => (
             <div key={item.title} className="expense">
               <span>{item.title}</span>
               <span>{item.amount} টাকা</span>
@@ -108,6 +128,31 @@ export default function Farm({ onBack }: { onBack: () => void }) {
       </section>
 
       <DemoNote />
+
+      <Overlay>
+        <BottomSheet
+          open={ledger}
+          headline="খরচের খাতা"
+          onClose={() => setLedger(false)}
+        >
+          <div className="sheet-body">
+            {ALL_EXPENSES.map((item) => (
+              <div key={item.title} className="expense">
+                <span>{item.title}</span>
+                <span>{item.amount} টাকা</span>
+              </div>
+            ))}
+            <div className="expense expense--total">
+              <span>মোট</span>
+              <span>৬,০০০ টাকা</span>
+            </div>
+            <p className="fineprint">ডেমো হিসাব, টাকা কোথাও পাঠানো হয় না।</p>
+            <Button variant="text" size="m" onClick={() => setLedger(false)}>
+              বন্ধ করুন
+            </Button>
+          </div>
+        </BottomSheet>
+      </Overlay>
     </section>
   );
 }
