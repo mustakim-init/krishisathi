@@ -5,7 +5,7 @@ export function PhoneHeader({ title, onBack }: { title: string; onBack?: () => v
   return (
     <header className="view__header">
       {onBack && (
-        <Button variant="text" size="s" icon={ICONS.back} onClick={onBack} aria-label="ফিরে যান">
+        <Button variant="text" size="m" icon={ICONS.back} onClick={onBack} aria-label="ফিরে যান">
           ফিরে যান
         </Button>
       )}
