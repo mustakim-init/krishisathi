@@ -2,6 +2,15 @@
 
 A talking assistant for rice farmers in Bangladesh. You say what's wrong with your crop, it asks a few simple questions, and it answers out loud in Bangla.
 
+| | |
+|---|---|
+| **Track** | Agriculture — Aethermind 2026, BUCC, BRAC University |
+| **Team** | Four undergraduate students from BRAC University |
+| **SDG** | Target 2.4 (primary), Target 2.3 (secondary) |
+| **Status** | Round 1: clickable prototype. The Android app is built in the competition's 10-day window, Dec 11–20, 2026. |
+| **Live prototype** | Not published yet — the link goes here once the Round 1 mockup is deployed |
+| **License** | MIT |
+
 ## Why we built it
 
 Farming is still how close to half of Bangladesh's people earn a living, and most of those farmers work small plots. The UNDP puts the share of farmers on small and marginal land at over 76% ([source](https://www.undp.org/node/148791)). When rice gets sick, there is often no expert nearby. A wrong guess can cost a season's work, and the usual fallback is to spray more, which costs money and hurts the soil and water.
@@ -18,6 +27,18 @@ The advice is meant to come from published guidance such as BRRI and the Departm
 
 The app also helps through the season. A farmer can save their field, see what stage the crop is in, get reminders for what to do next, read illustrated guides with audio, and keep a simple record of costs. The guides, reminders and records work without internet. Only the conversation needs a connection.
 
+## How it works
+
+The AI model handles language and image understanding. The rest is ours.
+
+1. The farmer speaks or types, and may send a leaf photo.
+2. **Understanding.** The model turns the speech into Bangla text and picks out symptoms. It can only choose from the problems in our own knowledge base, which is small, written from published sources and checked by a person.
+3. **Retrieval (ours).** We score those candidates by how well the symptoms match, whether the crop's growth stage fits, and whether the season fits.
+4. **Decision (ours).** Three outcomes: ask one more short question (at most three per issue), answer, or hand over to a person. The thresholds are set by testing, not by feel.
+5. **Answering.** The model writes the reply from the selected knowledge-base entries only, and every step it gives has to name the entry it came from.
+6. **Safety check (ours).** A reply is rejected if a step has no source, or if it contains a pesticide name or dose that isn't in the cited entry. If confidence isn't high, the agriculture-office note is always added.
+7. The answer is spoken, shown on screen with a replay button, and saved.
+
 ## Who it is for and how it pays for itself
 
 Farmers use it for free. The organisations that already work with farmers (NGOs, cooperatives, agro-input companies, mobile operators) are the ones who would fund it. More in [business and impact](docs/business-and-impact.md).
@@ -30,23 +51,47 @@ Several good tools already serve farmers, including Dr. Chashi, BRRI's own rice 
 
 KrishiSathi supports UN Sustainable Development Goal 2, mainly Target 2.4 (farming that is sustainable and resilient, including less unnecessary chemical use) and Target 2.3 (higher productivity and income for small farmers).
 
+## How to run it
+
+The Round 1 prototype is plain HTML, CSS and JavaScript in `mockup/`, with no build step and no dependencies. Open `mockup/index.html` in a browser, or use the deployed link above. On a desktop it is meant to be viewed inside a phone frame; it is designed for a 360–412 px wide screen.
+
+The Android app does not exist yet. When it does, this section will say how to open it in Android Studio and where to put the API key, which lives in `local.properties` and is never committed.
+
 ## How AI is used
 
-In the app, an AI model listens to the farmer and looks at the photo. On top of that we are building our own parts: choosing likely problems from the symptoms and the growth stage, deciding when to ask another question or hand over to a person, and blocking any advice that isn't backed by a source.
+This is the full list of AI tools used on this project. Nothing is hidden from this table.
 
-Tools we used while working on this project:
+| Tool | What we used it for | Review |
+|---|---|---|
+| Claude (Anthropic) | Research, planning, drafting documents | Draft output is read and corrected by a team member before it is committed |
+| ChatGPT (OpenAI) | Brainstorming, drafting documents | Draft output is read and corrected by a team member before it is committed |
+| OpenCode with DeepSeek V4.1 Flash Free | Coding assistant: repository setup, writing and editing project documentation | Draft output is read and corrected by a team member before it is committed |
 
-| Tool | What we used it for |
-|---|---|
-| Claude (Anthropic) | Research help, planning and drafting documents |
-| ChatGPT (OpenAI) | Brainstorming and drafting documents |
-| Coding assistant(s) | Add the exact tool names here as you use them |
+Speech recognition and text-to-speech models have not been chosen yet. The voice we pick will be listed here with its licence and cost, because some Bangla voices are free for non-commercial use only.
 
-We will keep this table up to date, including any speech or text-to-speech models, libraries and datasets we add later.
+No images or video have been made with AI. If we use any, they will carry a visible label saying so.
 
-## Where we are
+## Open-source libraries
 
-The competition's first round is a clickable prototype of the app. The working app will be built during the 10-day build window and shown on Demo Day.
+None yet. The Round 1 prototype uses no libraries. Every library added to the Android app will be listed here with its licence.
+
+## Datasets
+
+None yet. The photo test set for the build window will be our own photographs plus openly licensed images, and each source will be listed here.
+
+## Knowledge base sources
+
+Advice in the app comes only from public Bangladeshi agriculture guidance: the Bangladesh Rice Research Institute (BRRI), the Department of Agricultural Extension (DAE), the Bangladesh Agricultural Research Council (BARC), and BAMIS agro-advisories. Each entry records its exact page, publisher and access date, and is checked against the source by a team member before it is used. There is no entry without a source, and no advice in the app that isn't in an entry.
+
+## Known limitations
+
+- The Round 1 submission is a scripted prototype. It does not diagnose anything and does not use a camera or microphone.
+- The Android app is built during the competition's 10-day window and is not released. It is a demo, not a product people can download.
+- It answers in Bangla only, and about rice only.
+- It is not a replacement for an agriculture officer. When it isn't sure, it says so and points to the local office.
+- Bangla speech recognition and text-to-speech have not been tested widely. Regional dialects are untested.
+- There are no accuracy numbers yet. Any figures we publish later will come from our own described test set, including the failures.
+- The conversation needs internet. Only the guides, calendar, farm profile, diary and history work offline.
 
 ## License
 
