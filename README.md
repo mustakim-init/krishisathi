@@ -1,12 +1,13 @@
 # KrishiSathi (কৃষিসাথী)
 
-A talking assistant for rice farmers in Bangladesh. You say what's wrong with your crop, it asks a few simple questions, and it answers out loud in Bangla.
+A talking assistant for farmers in Bangladesh. You say what's wrong with your crop, it asks a few simple questions, and it answers out loud in Bangla. We start with rice, the crop most farmers grow, but the product is built for farmers, not for one crop.
 
 | | |
 |---|---|
 | **Track** | Agriculture — Aethermind 2026, BUCC, BRAC University |
 | **Team** | Four undergraduate students from BRAC University |
 | **SDG** | Target 2.4 (primary), Target 2.3 (secondary) |
+| **First crop** | Rice (আউশ, আমন, বোরো) — the starting point, not the boundary |
 | **Status** | Round 1: clickable prototype. The Android app is built in the competition's 10-day window, Dec 11–20, 2026. |
 | **Live prototype** | Not published yet — the link goes here once the Round 1 mockup is deployed |
 | **License** | MIT |
@@ -26,6 +27,12 @@ A farmer taps one big button and talks, or sends a photo of the leaf. A photo al
 The advice is meant to come from published guidance such as BRRI and the Department of Agricultural Extension, not from the AI's guess. If the assistant isn't sure, it says so and points the farmer to the local agriculture office instead of making something up.
 
 The app also helps through the season. A farmer can save their field, see what stage the crop is in, get reminders for what to do next, read illustrated guides with audio, and keep a simple record of costs. The guides, reminders and records work without internet. Only the conversation needs a connection.
+
+### Rice first, not rice only
+
+Rice is where we start. It is the main crop, most farmers grow it, and the public guidance for it is good enough to build on.
+
+Nothing in the app is built around rice as a limit. The assistant decides what it can answer from the guidance it has been given, and a crop it has no guidance for gets an honest "I don't have reliable information on this one" and a pointer to the local agriculture office. Adding a crop means adding guidance that a person has checked against its source, not rebuilding the app.
 
 ## How it works
 
@@ -83,11 +90,13 @@ None yet. The photo test set for the build window will be our own photographs pl
 
 Advice in the app comes only from public Bangladeshi agriculture guidance: the Bangladesh Rice Research Institute (BRRI), the Department of Agricultural Extension (DAE), the Bangladesh Agricultural Research Council (BARC), and BAMIS agro-advisories. Each entry records its exact page, publisher and access date, and is checked against the source by a team member before it is used. There is no entry without a source, and no advice in the app that isn't in an entry.
 
+Rice entries come from BRRI, the national rice institute. Other crops will draw on the institutes that cover them, such as the Bangladesh Agricultural Research Institute (BARI), under the same rule: a person checks each entry against its source before it ships.
+
 ## Known limitations
 
 - The Round 1 submission is a scripted prototype. It does not diagnose anything and does not use a camera or microphone.
 - The Android app is built during the competition's 10-day window and is not released. It is a demo, not a product people can download.
-- It answers in Bangla only, and about rice only.
+- It answers in Bangla only. The first version covers rice; for a crop we have no verified guidance on, it says so and refers the farmer to the local office instead of guessing.
 - It is not a replacement for an agriculture officer. When it isn't sure, it says so and points to the local office.
 - Bangla speech recognition and text-to-speech have not been tested widely. Regional dialects are untested.
 - There are no accuracy numbers yet. Any figures we publish later will come from our own described test set, including the failures.

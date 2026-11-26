@@ -2,7 +2,7 @@
 
 ## Who we are building for
 
-Our main users are small rice farmers with a basic or mid-range Android phone who are comfortable speaking Bangla and less comfortable with apps full of menus. Around them are the people who already help farmers: agro-input dealers, NGO field workers and extension staff. Those groups are also our likely customers.
+Our main users are small farmers, starting with rice growers, who have a basic or mid-range Android phone, are comfortable speaking Bangla and less comfortable with apps full of menus. Around them are the people who already help farmers: agro-input dealers, NGO field workers and extension staff. Those groups are also our likely customers.
 
 ## What farmers can use today
 
@@ -29,6 +29,8 @@ What we noticed is that most tools give an answer from a photo or a menu choice,
 - It stays with the farmer through the season, with a field profile, stage-based reminders and illustrated guides with audio.
 - The guides, reminders and records work offline.
 - Everything is in Bangla, and every important screen can be heard as well as read.
+
+Rice is our starting crop because it is the main one and the public guidance for it is strong. The product is not tied to it: what the assistant can answer is decided by the guidance it has been given, so a new crop is new content, not a new app.
 
 Competitors can copy features. What is harder to copy is the quality of the advice and the relationships with the organisations that work with farmers, so that is where we plan to put our effort.
 
