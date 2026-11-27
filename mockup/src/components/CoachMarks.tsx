@@ -12,20 +12,20 @@ type Step = {
 const STEPS: Step[] = [
   {
     target: "[data-coach='mic']",
-    title: "এখানে চাপ দিয়ে কথা বলুন",
-    body: "বড় মাইক বোতামটিই সবচেয়ে সহজ পথ। চাপ দিলে কথা বলা শুরু হবে।",
+    title: "এখানে চাপ দিয়ে কথা বলুন",
+    body: "বড় মাইক বাটনটাই সবচেয়ে সহজ। চাপ দিলে কথা বলা শুরু হবে।",
     side: "below",
   },
   {
     target: "[data-coach='camera']",
     title: "পাতার ছবি দেখাতে এখানে চাপুন",
-    body: "ছবি দিয়ে সমস্যা জানতে চাইলে এই সারিতে চাপ দিন।",
+    body: "ছবি দিয়ে সমস্যা জানতে চাইলে এই কার্ডে ট্যাপ করুন।",
     side: "below",
   },
   {
     target: "[data-coach='tabs']",
-    title: "নিচের বোতাম দিয়ে পাতা বদলান",
-    body: "হোম, কথা বলুন, আমার জমি আর সাহায্য — যেকোনো সময় যেতে পারবেন।",
+    title: "নিচের বার দিয়ে স্ক্রিন বদলান",
+    body: "হোম, কথা বলুন, আমার জমি আর সাহায্য — যেকোনো সময় যেতে পারবেন।",
     side: "above",
   },
 ];
@@ -83,7 +83,6 @@ export default function CoachMarks({ onDone }: { onDone: () => void }) {
     const above = spot.top - height - 12;
     const lowest = Math.max(12, bounds.height - height - 12);
 
-    // Prefer the requested side, but flip to the other one when it would clip.
     const order = step.side === "above" ? [above, below] : [below, above];
     const fitting = order.find((value) => value >= 12 && value <= lowest);
     const top = fitting ?? Math.min(Math.max(12, order[0]), lowest);
@@ -105,7 +104,7 @@ export default function CoachMarks({ onDone }: { onDone: () => void }) {
   const last = index === STEPS.length - 1;
 
   return (
-    <div className="coach" ref={rootRef} role="dialog" aria-modal="true" aria-label="অ্যাপের ছোট পরিচিতি">
+    <div className="coach" ref={rootRef} role="dialog" aria-modal="true" aria-label="অ্যাপ চালানোর পরিচিতি">
       {spot && (
         <div
           className="coach__spot"
@@ -115,7 +114,7 @@ export default function CoachMarks({ onDone }: { onDone: () => void }) {
 
       <div className="coach__bubble" ref={bubbleRef} style={{ top: bubble.top, left: bubble.left }}>
         <p className="coach__count">
-          পরিচিতি {toBangla(index + 1)} / {toBangla(STEPS.length)}
+          ধাপ {toBangla(index + 1)} / {toBangla(STEPS.length)}
         </p>
         <p className="coach__title">{step.title}</p>
         <p className="coach__body">{step.body}</p>
