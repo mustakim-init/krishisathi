@@ -40,6 +40,12 @@ export const ICONS = {
   ),
   diary: wrap(`<path d="M6 3.5h12v17l-3-2-3 2-3-2-3 2v-17Z"/><path d="M9 8h6M9 12h6"/>`),
   person: wrap(`<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/>`),
+  menu: wrap(`<path d="M4 7h16M4 12h16M4 17h16"/>`),
+  play: wrap(`<path d="M8 5.5v13l11-6.5Z"/>`),
+  pause: wrap(`<path d="M9 5.5v13M15 5.5v13"/>`),
+  logout: wrap(`<path d="M14 4.5h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-4"/><path d="M9 8l-4 4 4 4M5 12h10"/>`),
+  mail: wrap(`<rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/>`),
+  trash: wrap(`<path d="M4.5 7h15M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v5M14 11v5"/>`),
   offline: wrap(
     `<path d="M3 3l18 18"/><path d="M8.5 8.5a10 10 0 0 0-2 1.5M12 5c3 0 5.8 1.1 8 3"/><path d="M12 12a5 5 0 0 1 2 .4"/><circle cx="12" cy="18" r="1.2" fill="currentColor" stroke="none"/>`,
   ),
