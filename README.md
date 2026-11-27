@@ -9,7 +9,7 @@ A Bangla, voice-first AI companion for smallholder farmers in Bangladesh. You sp
 | **UN SDG** | Target 2.4 (primary), Target 2.3 (secondary) |
 | **First crop** | Rice (আউশ, আমন, বোরো) — starting point, not the boundary |
 | **Status** | Round 1: static clickable prototype (`mockup/`). The Android app will be built during the Dec 11–20, 2026 build window. |
-| **Live prototype** | Not published yet — the link goes here once the Round 1 mockup is deployed |
+| **Live prototype** | [krishisathi-three.vercel.app](https://krishisathi-three.vercel.app) — the clickable Round 1 prototype, running on scripted demo data |
 | **License** | MIT |
 
 ## Why we built it
