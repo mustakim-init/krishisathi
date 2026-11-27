@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "material/react";
 import Card from "../components/Card";
-import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
+import { PhoneHeader } from "../components/PhoneHeader";
 import { hasFarm, landLabel, seasonLabel, type FarmProfile } from "../farm";
 import { toBangla } from "../format";
 import {
@@ -29,13 +29,11 @@ export default function Settings({
   textSize,
   onChangeTextSize,
   onSetup,
-  onBack,
 }: {
   profile: FarmProfile;
   textSize: TextSize;
   onChangeTextSize: (value: TextSize) => void;
   onSetup: () => void;
-  onBack: () => void;
 }) {
   const [speed, setSpeed] = useState<VoiceSpeed>(readVoiceSpeed);
   const [buzzOn, setBuzzOn] = useState(readVibrate);
@@ -54,13 +52,13 @@ export default function Settings({
 
   return (
     <section className="view">
-      <PhoneHeader title="সেটিংস" onBack={onBack} />
+      <PhoneHeader title="সেটিংস" />
 
       <p className="lede">পড়তে বা শুনতে সুবিধা অনুযায়ী এখান থেকে ঠিক করে নিন।</p>
 
       <Card variant="filled" className="panel">
         <h2 className="panel__title">আমার খামার</h2>
-        <p>এই তথ্যগুলো শুধু আপনার ফোনেই সেভ থাকে (কোনো লগইন লাগে না)।</p>
+        <p>এই তথ্যগুলো আপনার ফোনেই সেভ থাকে।</p>
         <dl className="reasons">
           <div className="reasons__row">
             <dt>নাম</dt>
@@ -177,7 +175,6 @@ export default function Settings({
         </div>
       </Card>
 
-      <DemoNote />
     </section>
   );
 }

@@ -5,18 +5,21 @@ import { isTab, SCREENS, type Screen } from "./nav";
 import { readTextSize, writeTextSize, type TextSize } from "./settings";
 import { DEFAULT_ANSWERS, type CaseAnswers } from "./data/demo";
 import { readProfile, writeProfile, type FarmProfile } from "./farm";
+import { readAuth, writeAuth, clearAuth, type Auth } from "./auth";
 import CoachMarks from "./components/CoachMarks";
 import Home from "./screens/Home";
 import Onboarding from "./screens/Onboarding";
+import Login from "./screens/Login";
 import Guide from "./screens/Guide";
 import Talk from "./screens/Talk";
-import Doctor from "./screens/Doctor";
 import Result from "./screens/Result";
 import Farm from "./screens/Farm";
 import Guides from "./screens/Guides";
 import Help from "./screens/Help";
 import Settings from "./screens/Settings";
 import FarmSetup from "./screens/FarmSetup";
+import Profile from "./screens/Profile";
+import Saved from "./screens/Saved";
 
 const ONBOARDED_KEY = "krishisathi.onboarded";
 const TOUR_KEY = "krishisathi.tour.done";
@@ -43,13 +46,18 @@ function initialScreen(): Screen {
   return readFlag(ONBOARDED_KEY) ? "home" : "onboarding";
 }
 
+type SetupReturn = "home" | "farm" | "settings" | "profile";
+
 export default function App() {
   const [screen, setScreen] = useState<Screen>(initialScreen);
   const [tour, setTour] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(readTextSize);
   const [answers, setAnswers] = useState<CaseAnswers>(DEFAULT_ANSWERS);
   const [profile, setProfile] = useState<FarmProfile>(readProfile);
-  const [setupReturn, setSetupReturn] = useState<"home" | "farm" | "settings">("home");
+  const [auth, setAuth] = useState<Auth | null>(readAuth);
+  const [setupReturn, setSetupReturn] = useState<SetupReturn>("home");
+  const [openConversationId, setOpenConversationId] = useState<string | null>(null);
+  const [startWithPhoto, setStartWithPhoto] = useState(false);
 
   const go = (next: Screen) => {
     setScreen(next);
@@ -61,20 +69,54 @@ export default function App() {
     setTour(true);
   };
 
-  const openSetup = (from: typeof setupReturn) => {
+  const openSetup = (from: SetupReturn) => {
     setSetupReturn(from);
     go("setup");
   };
 
   const finishOnboarding = () => {
     writeFlag(ONBOARDED_KEY);
+    go(auth ? "home" : "login");
+  };
+
+  const finishLogin = (next: Auth) => {
+    writeAuth(next);
+    setAuth(next);
+    writeFlag(ONBOARDED_KEY);
     go("home");
+  };
+
+  const skipLogin = () => {
+    writeFlag(ONBOARDED_KEY);
+    go("home");
+  };
+
+  const logout = () => {
+    clearAuth();
+    setAuth(null);
   };
 
   const finishSetup = (next: FarmProfile) => {
     writeProfile(next);
     setProfile(next);
     go(setupReturn);
+  };
+
+  const openSavedConversation = (id: string) => {
+    setStartWithPhoto(false);
+    setOpenConversationId(id);
+    go("talk");
+  };
+
+  const openPhotoChat = () => {
+    setOpenConversationId(null);
+    setStartWithPhoto(true);
+    go("talk");
+  };
+
+  const clearTalkIntent = () => {
+    setOpenConversationId(null);
+    setStartWithPhoto(false);
   };
 
   const endTour = () => {
@@ -88,6 +130,7 @@ export default function App() {
   };
 
   const activeTab = isTab(screen) ? screen : "home";
+  const chrome = screen !== "onboarding" && screen !== "login" && screen !== "setup";
 
   useEffect(() => {
     if (screen !== "home") setTour(false);
@@ -115,36 +158,69 @@ export default function App() {
           {screen === "onboarding" && (
             <Onboarding onFinish={finishOnboarding} onGuide={() => go("guide")} />
           )}
-          {screen === "setup" && <FarmSetup initial={profile} onDone={finishSetup} />}
+          {screen === "login" && <Login onDone={finishLogin} onSkip={skipLogin} />}
+          {screen === "setup" && (
+            <FarmSetup
+              initial={profile}
+              onDone={finishSetup}
+              onCancel={() => go(setupReturn)}
+            />
+          )}
           {screen === "home" && (
             <Home profile={profile} onGo={go} onSetup={() => openSetup("home")} />
           )}
-          {screen === "talk" && <Talk onResult={() => go("result")} onPhoto={() => go("doctor")} />}
-          {screen === "doctor" && (
-            <Doctor
-              onBack={() => go("home")}
+          {screen === "talk" && (
+            <Talk
               onResult={(next) => {
                 setAnswers(next);
                 go("result");
               }}
+              onSaved={() => go("saved")}
+              openConversationId={openConversationId}
+              startWithPhoto={startWithPhoto}
+              onIntentUsed={clearTalkIntent}
             />
           )}
           {screen === "result" && (
             <Result
               answers={answers}
-              onBack={() => go("home")}
               onAsk={() => go("talk")}
               onHelp={() => go("help")}
-              onRetake={() => go("doctor")}
+              onRetake={openPhotoChat}
             />
           )}
           {screen === "farm" && (
-            <Farm profile={profile} onBack={() => go("home")} onSetup={() => openSetup("farm")} />
+            <Farm profile={profile} onSetup={() => openSetup("farm")} />
           )}
-          {screen === "guides" && <Guides onBack={() => go("home")} onDoctor={() => go("doctor")} />}
-          {screen === "guide" && <Guide onBack={() => go("home")} onGo={go} onTour={startTour} />}
+          {screen === "guides" && <Guides onTalk={() => go("talk")} />}
+          {screen === "profile" && (
+            <Profile
+              profile={profile}
+              auth={auth}
+              onSetup={() => openSetup("profile")}
+              onLogin={() => go("login")}
+              onLogout={logout}
+              onSaved={() => go("saved")}
+              onSettings={() => go("settings")}
+              onHelp={() => go("help")}
+            />
+          )}
+          {screen === "saved" && (
+            <Saved
+              profile={profile}
+              onOpen={openSavedConversation}
+              onTalk={() => go("talk")}
+              onProfile={() => go("profile")}
+            />
+          )}
+          {screen === "guide" && <Guide onGo={go} onTour={startTour} />}
           {screen === "help" && (
-            <Help onGuide={() => go("guide")} onTour={startTour} onSettings={() => go("settings")} />
+            <Help
+              profile={profile}
+              onGuide={() => go("guide")}
+              onTour={startTour}
+              onSettings={() => go("settings")}
+            />
           )}
           {screen === "settings" && (
             <Settings
@@ -152,12 +228,11 @@ export default function App() {
               textSize={textSize}
               onChangeTextSize={changeTextSize}
               onSetup={() => openSetup("settings")}
-              onBack={() => go("help")}
             />
           )}
         </main>
 
-        {screen !== "onboarding" && screen !== "setup" && (
+        {chrome && (
           <div className="tabbar" data-coach="tabs">
             <NavigationBar
               value={activeTab}

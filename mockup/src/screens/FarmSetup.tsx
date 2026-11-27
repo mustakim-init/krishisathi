@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "material/react";
+import { ICONS } from "../icons";
 import { toBangla } from "../format";
 import {
   AREAS,
@@ -39,9 +40,11 @@ const STEPS = [
 export default function FarmSetup({
   initial,
   onDone,
+  onCancel,
 }: {
   initial: FarmProfile;
   onDone: (profile: FarmProfile) => void;
+  onCancel: () => void;
 }) {
   const [index, setIndex] = useState(0);
   const [draft, setDraft] = useState<FarmProfile>(initial);
@@ -68,8 +71,17 @@ export default function FarmSetup({
     <section className="view view--setup">
       <header className="setup__top">
         <span className="setup__brand">আমার জমি সেটআপ</span>
-        <span className="setup__count">
-          ধাপ {toBangla(index + 1)} / {toBangla(STEPS.length)}
+        <span className="setup__top-right">
+          <span className="setup__count">
+            ধাপ {toBangla(index + 1)} / {toBangla(STEPS.length)}
+          </span>
+          <button
+            type="button"
+            className="setup__close"
+            aria-label="সেটআপ বাতিল"
+            onClick={onCancel}
+            dangerouslySetInnerHTML={{ __html: ICONS.close }}
+          />
         </span>
       </header>
 

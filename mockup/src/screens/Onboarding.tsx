@@ -20,7 +20,7 @@ export default function Onboarding({
           <h1 className="welcome__brand">কৃষিসাথী</h1>
           <p className="welcome__tagline">ধানের সমস্যা? কথা বলুন, সমাধান শুনুন।</p>
           <p className="welcome__sub">
-            কোনো অ্যাকাউন্ট বা পাসওয়ার্ড লাগবে না। অ্যাপ খুলে সরাসরি নিজের ভাষায় কথা বলুন।
+            মোবাইল নম্বর দিয়ে ঢুকুন — পাসওয়ার্ড লাগবে না। অ্যাপ খুলে সরাসরি কথা বলুন।
           </p>
         </div>
 
@@ -60,8 +60,6 @@ export default function Onboarding({
           </Button>
         </div>
       </div>
-
-      <p className="demo-note">এটি একটি ডেমো প্রোটোটাইপ। প্রকৃত রোগ নির্ণয় নয়।</p>
     </section>
   );
 }

@@ -1,43 +1,42 @@
 import { Button, Fab } from "material/react";
 import Card from "../components/Card";
 import { ICONS } from "../icons";
-import { DemoNote } from "../components/PhoneHeader";
 import type { Screen } from "../nav";
-import { greetingName, hasFarm, stageFor, tasksForProfile, type FarmProfile } from "../farm";
+import { hasFarm, stageFor, tasksForProfile, type FarmProfile } from "../farm";
 import { toBangla } from "../format";
 
 const TILES = [
   {
-    screen: "doctor",
-    icon: ICONS.camera,
-    title: "ছবি দেখান",
-    sub: "পাতার ছবি দিয়ে জানুন",
-    tone: "tile--tint",
-    coach: "camera",
-  },
-  {
     screen: "farm",
     icon: ICONS.sprout,
     title: "আমার জমি",
-    sub: "অবস্থা, কাজ ও হিসাব",
+    sub: "অবস্থা, কাজ ও খরচ",
     tone: "tile--tint",
     coach: undefined,
   },
   {
     screen: "guides",
     icon: ICONS.book,
-    title: "চাষের গাইড",
-    sub: "অফলাইনেও চলবে",
+    title: "সঠিক চাষের নিয়ম",
+    sub: "অফলাইনেও ব্যবহার করুন",
     tone: "tile--surface",
     coach: undefined,
   },
   {
-    screen: "result",
+    screen: "saved",
     icon: ICONS.diary,
-    title: "আগের উত্তর",
-    sub: "সেভ করা পরামর্শ",
+    title: "সংরক্ষিত তথ্যসমূহ",
+    sub: "ফোনেই সংরক্ষিত থাকে",
     tone: "tile--surface",
     coach: undefined,
+  },
+  {
+    screen: "profile",
+    icon: ICONS.person,
+    title: "আমার প্রোফাইল",
+    sub: "নাম, জেলা ও অ্যাকাউন্ট",
+    tone: "tile--tint",
+    coach: "profile",
   },
 ] as const satisfies ReadonlyArray<{
   screen: Screen;
@@ -67,17 +66,29 @@ export default function Home({
         : null;
   const previewTasks = configured ? tasksForProfile(profile).slice(0, 2) : [];
 
+  const profileMeta = profile.district
+    ? [profile.district, profile.areaShotangsho !== null && `${toBangla(profile.areaShotangsho)} শতাংশ`]
+        .filter(Boolean)
+        .join(" · ")
+    : "জমির তথ্য দিন";
+
   return (
     <section className="view">
       <header className="home__topbar">
-        <div>
-          <p className="home__eyebrow">
-            {profile.district ? `${profile.district} · ডেমো` : "আপনার খামার"}
-          </p>
-          <h1 className="home__greeting">স্বাগতম, {greetingName(profile)}</h1>
-        </div>
+        <button
+          type="button"
+          className="home__profile"
+          data-coach="profile"
+          onClick={() => onGo("profile")}
+        >
+          <span className="home__avatar" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.person }} />
+          <span className="home__who">
+            <span className="home__name">{profile.name.trim() || "আমার প্রোফাইল"}</span>
+            <span className="home__meta">{profileMeta}</span>
+          </span>
+        </button>
         <div className="home__top-actions">
-          <div className="home__weather" aria-label="আজকের আবহাওয়া ৩২ ডিগ্রি রোদ">
+          <div className="home__weather" aria-label="আজকের আবহাওয়া ৩২ ডিগ্রি রোদ">
             <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.sun }} />
             <span>৩২°</span>
           </div>
@@ -102,10 +113,10 @@ export default function Home({
             onClick={() => onGo("talk")}
           />
         </div>
-        <h2 className="hero-ask__title">সমস্যা আছে? কথা বলুন</h2>
-        <p className="hero-ask__hint">নিজের ভাষায় বলুন, অ্যাপ শুনে সমাধান দেবে</p>
+        <h2 className="hero-ask__title">কথা বলুন, সমাধান করুন</h2>
+        <p className="hero-ask__hint">মুখে বলুন, লিখুন বা পাতার ছবি দিন</p>
         <Button variant="filled" size="m" onClick={() => onGo("talk")}>
-          মাইক চালু করুন
+          আপনার সমস্যা বলুন
         </Button>
       </Card>
 
@@ -161,8 +172,6 @@ export default function Home({
           </Button>
         )}
       </Card>
-
-      <DemoNote />
     </section>
   );
 }

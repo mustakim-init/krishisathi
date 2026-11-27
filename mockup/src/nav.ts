@@ -3,8 +3,10 @@ export type Tab = "home" | "talk" | "farm" | "help";
 export type Screen =
   | "onboarding"
   | Tab
+  | "login"
   | "setup"
-  | "doctor"
+  | "profile"
+  | "saved"
   | "result"
   | "guides"
   | "guide"
@@ -14,13 +16,15 @@ export const TAB_SCREENS: readonly Tab[] = ["home", "talk", "farm", "help"];
 
 export const SCREENS: readonly Screen[] = [
   "onboarding",
+  "login",
   "setup",
   "home",
   "talk",
-  "doctor",
   "result",
   "farm",
   "guides",
+  "profile",
+  "saved",
   "help",
   "guide",
   "settings",

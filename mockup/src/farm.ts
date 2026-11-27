@@ -69,10 +69,6 @@ export const DISTRICTS = [
 export const PLANTED_DAYS = [7, 15, 30, 45, 60, 75] as const;
 export const AREAS = [10, 20, 33, 50, 100] as const;
 
-export function greetingName(profile: FarmProfile): string {
-  return profile.name.trim() || "কৃষক";
-}
-
 export function seasonLabel(season: Season | null): string | null {
   return SEASONS.find((item) => item.value === season)?.label ?? null;
 }

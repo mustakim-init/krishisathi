@@ -1,7 +1,7 @@
 import { Button } from "material/react";
 import Card from "../components/Card";
 import { ICONS } from "../icons";
-import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
+import { PhoneHeader } from "../components/PhoneHeader";
 import { toBangla } from "../format";
 import type { Screen } from "../nav";
 
@@ -10,8 +10,8 @@ const TOPICS = [
     icon: ICONS.mic,
     title: "কথা বলে প্রশ্ন করুন",
     steps: [
-      "হোমে গিয়ে বড় সবুজ মাইক বাটনে চাপ দিন।",
-      "‘শুনছি’ লেখা এলে নিজের ভাষায় সমস্যা বলুন।",
+      "‘কথা বলুন’ ট্যাবে গিয়ে বড় মাইক বাটনে চাপ দিন।",
+      "‘শুনছি’ লেখা এলে সমস্যা বলুন, অথবা নিচের ঘরে লিখুন।",
       "উত্তর আবার শুনতে চাইলে ‘শুনুন’ বাটনে চাপ দিন।",
     ],
     screen: "talk",
@@ -21,12 +21,12 @@ const TOPICS = [
     icon: ICONS.camera,
     title: "ধানের পাতার ছবি দেখান",
     steps: [
-      "হোম থেকে ‘ছবি দেখান’ কার্ডে ট্যাপ করুন।",
-      "একটি নমুনা ছবি বেছে নিন।",
-      "দুটি ছোট প্রশ্নের উত্তর দিয়ে ‘ছবি বিশ্লেষণ করুন’ চাপুন।",
+      "‘কথা বলুন’ স্ক্রিনে লেখার ঘরের ক্যামেরা আইকনে চাপুন।",
+      "ডেমোতে একটি নমুনা ছবি বেছে নিন।",
+      "দুটি ছোট প্রশ্নের উত্তর দিয়ে ‘পুরো সমাধান দেখুন’ চাপুন।",
     ],
-    screen: "doctor",
-    action: "ছবির স্ক্রিনে যান",
+    screen: "talk",
+    action: "কথা বলার স্ক্রিনে যান",
   },
   {
     icon: ICONS.sprout,
@@ -34,21 +34,21 @@ const TOPICS = [
     steps: [
       "‘আমার জমি’ ট্যাবে আজকের কাজ দেখুন।",
       "কাজ শেষ হলে পাশের ঘরে টিক দিন।",
-      "‘খরচের খাতা’ থেকে মৌসুমের হিসাব দেখুন।",
+      "‘খরচ যোগ করুন’ চেপে নিজের খরচ লিখুন।",
     ],
     screen: "farm",
     action: "আমার জমিতে যান",
   },
   {
     icon: ICONS.book,
-    title: "গাইড পড়ুন, সাহায্য নিন",
+    title: "সঠিক নিয়ম পড়ুন, সাহায্য নিন",
     steps: [
-      "‘চাষের গাইড’ থেকে ধানের যেকোনো ধাপ বেছে নিন।",
+      "‘সঠিক চাষের নিয়ম’ থেকে ধানের যেকোনো ধাপ বেছে নিন।",
       "প্রতিটি ধাপে তিনটি সহজ কাজ ও অডিও আছে।",
-      "নিশ্চিত না হলে ‘সাহায্য’ ট্যাবে কৃষি অফিসের নম্বর পাবেন।",
+      "নিশ্চিত না হলে ‘সাহায্য’ ট্যাবে জরুরি নম্বর পাবেন।",
     ],
     screen: "guides",
-    action: "গাইড দেখুন",
+    action: "নিয়মগুলো দেখুন",
   },
 ] as const satisfies ReadonlyArray<{
   icon: string;
@@ -59,17 +59,15 @@ const TOPICS = [
 }>;
 
 export default function Guide({
-  onBack,
   onGo,
   onTour,
 }: {
-  onBack: () => void;
   onGo: (screen: Screen) => void;
   onTour: () => void;
 }) {
   return (
     <section className="view">
-      <PhoneHeader title="কীভাবে চালাবেন" onBack={onBack} />
+      <PhoneHeader title="কীভাবে চালাবেন" />
 
       <p className="lede">
         চারটি সহজ ধাপেই পুরো অ্যাপ চলে। কোথাও বুঝতে অসুবিধা হলে এখান থেকে দেখে নিতে পারেন।
@@ -110,8 +108,6 @@ export default function Guide({
           </Card>
         ))}
       </div>
-
-      <DemoNote />
     </section>
   );
 }

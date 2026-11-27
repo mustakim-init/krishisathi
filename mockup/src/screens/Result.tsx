@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "material/react";
 import Card from "../components/Card";
 import { ICONS } from "../icons";
-import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
+import { PhoneHeader } from "../components/PhoneHeader";
 import type { CaseAnswers } from "../data/demo";
 import { playbackMs } from "../settings";
 
@@ -21,13 +21,11 @@ const STEPS = [
 
 export default function Result({
   answers,
-  onBack,
   onAsk,
   onHelp,
   onRetake,
 }: {
   answers: CaseAnswers;
-  onBack: () => void;
   onAsk: () => void;
   onHelp: () => void;
   onRetake: () => void;
@@ -43,7 +41,7 @@ export default function Result({
 
   return (
     <section className="view">
-      <PhoneHeader title="ফলাফল" onBack={onBack} />
+      <PhoneHeader title="ফলাফল" />
 
       <div className="verdict">
         <p className="verdict__label">ডেমো ফলাফল</p>
@@ -114,14 +112,10 @@ export default function Result({
         <Button variant="outlined" size="m" icon={ICONS.camera} onClick={onRetake}>
           আরেকটি ছবি দেখান
         </Button>
-        <Button variant="text" size="m" onClick={onBack}>
-          হোমে ফিরে যান
-        </Button>
       </div>
 
       <p className="fineprint saved-note">এই উত্তর আপনার ফোনে সেভ করা আছে, অফলাইনেও দেখা যাবে।</p>
 
-      <DemoNote />
     </section>
   );
 }

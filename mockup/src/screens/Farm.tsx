@@ -2,8 +2,8 @@ import { useState } from "react";
 import { BottomSheet, Button, Checkbox, Progress } from "material/react";
 import Card from "../components/Card";
 import { ICONS } from "../icons";
-import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
-import { toBangla } from "../format";
+import { PhoneHeader } from "../components/PhoneHeader";
+import { fromBangla, toBangla } from "../format";
 import {
   hasFarm,
   landLabel,
@@ -14,30 +14,27 @@ import {
   type FarmProfile,
 } from "../farm";
 import Overlay from "../components/Overlay";
-
-const REMINDERS = [
-  { title: "জমি পরিদর্শন", when: "২ দিন পর" },
-  { title: "কৃষি অফিসে যোগাযোগ", when: "শুক্রবার" },
-];
-
-const INITIAL_EXPENSES = [
-  { title: "বীজ", amount: 1200 },
-  { title: "সেচ", amount: 800 },
-  { title: "সার", amount: 1500 },
-  { title: "শ্রমিক", amount: 2500 },
-];
+import {
+  EXPENSE_CATEGORIES,
+  newExpenseId,
+  readExpenses,
+  writeExpenses,
+  type Expense,
+} from "../expenses";
 
 export default function Farm({
   profile,
-  onBack,
   onSetup,
 }: {
   profile: FarmProfile;
-  onBack: () => void;
   onSetup: () => void;
 }) {
   const [done, setDone] = useState<boolean[]>([false, false, false]);
   const [ledger, setLedger] = useState(false);
+  const [expenses, setExpenses] = useState<Expense[]>(readExpenses);
+  const [category, setCategory] = useState<(typeof EXPENSE_CATEGORIES)[number]>(EXPENSE_CATEGORIES[0]);
+  const [amount, setAmount] = useState("");
+  const [error, setError] = useState("");
 
   const configured = hasFarm(profile);
   const days = profile.plantedDays;
@@ -59,15 +56,35 @@ export default function Farm({
   const tasks = configured ? tasksForProfile(profile) : [];
   const suggestion = configured ? suggestionForProfile(profile) : "";
   const finished = done.slice(0, tasks.length).filter(Boolean).length;
-  const totalCost = INITIAL_EXPENSES.reduce((sum, item) => sum + item.amount, 0);
+  const nextTask = tasks.find((_, index) => !done[index]);
+  const totalCost = expenses.reduce((sum, item) => sum + item.amount, 0);
 
   const toggle = (index: number, checked: boolean) => {
     setDone((current) => current.map((value, i) => (i === index ? checked : value)));
   };
 
+  const addExpense = () => {
+    const value = Number(fromBangla(amount).replace(/\D/g, ""));
+    if (!value || value <= 0) {
+      setError("টাকার পরিমাণ লিখুন।");
+      return;
+    }
+    const next = [{ id: newExpenseId(), category, amount: value }, ...expenses];
+    setExpenses(next);
+    writeExpenses(next);
+    setAmount("");
+    setError("");
+  };
+
+  const removeExpense = (id: string) => {
+    const next = expenses.filter((item) => item.id !== id);
+    setExpenses(next);
+    writeExpenses(next);
+  };
+
   return (
     <section className="view">
-      <PhoneHeader title="আমার জমি" onBack={onBack} />
+      <PhoneHeader title="আমার জমি" />
 
       {!configured ? (
         <Card variant="filled" className="empty-farm">
@@ -78,7 +95,7 @@ export default function Farm({
           />
           <h2 className="panel__title">আগে আপনার জমির তথ্য দিন</h2>
           <p className="lede">
-            আপনি কি চাষ শুরু করেছেন নাকি জমি তৈরি করছেন, কী সার দিয়েছেন ও জমি কেমন—এই তথ্যগুলো দিলে
+            আপনি কি চাষ শুরু করেছেন নাকি জমি তৈরি করছেন, কী সার দিয়েছেন ও জমি কেমন—এই তথ্যগুলো দিলে
             এখানে সঠিক পরামর্শ ও আজকের কাজ দেখাবে।
           </p>
           <Button variant="filled" size="l" onClick={onSetup}>
@@ -93,14 +110,14 @@ export default function Farm({
                 <p className="field__name">
                   {profile.district ? `${profile.district} জমি` : "আমার ধান জমি"}
                 </p>
-                <p className="field__meta">{meta || "তথ্য দেওয়া আছে"}</p>
+                <p className="field__meta">{meta || "তথ্য দেওয়া আছে"}</p>
               </div>
               <span className="pill">{stage?.label ?? "চলমান"}</span>
             </div>
 
             {profile.status !== "preparing" && (
               <div className="field__stage">
-                <span>গাছের বয়স</span>
+                <span>গাছের বয়স</span>
                 <strong>{days !== null ? `${toBangla(days)} দিন` : "উল্লেখ নেই"}</strong>
               </div>
             )}
@@ -127,7 +144,7 @@ export default function Farm({
             <p className="fineprint">{suggestion}</p>
             {profile.fertilizers.length > 0 && (
               <p className="fineprint">
-                <strong>দেওয়া সার:</strong> {profile.fertilizers.join(", ")}
+                <strong>দেওয়া সার:</strong> {profile.fertilizers.join(", ")}
               </p>
             )}
           </Card>
@@ -157,52 +174,113 @@ export default function Farm({
           </section>
 
           <section className="block">
-            <h2 className="block__title">সামনের রিমাইন্ডার</h2>
-            {REMINDERS.map((item) => (
-              <div key={item.title} className="reminder">
-                <span className="reminder__title">{item.title}</span>
-                <span className="reminder__when">{item.when}</span>
+            <h2 className="block__title">পরের কাজ</h2>
+            {nextTask ? (
+              <div className="reminder">
+                <span className="reminder__title">{nextTask}</span>
+                <span className="reminder__when">বাকি</span>
               </div>
-            ))}
+            ) : (
+              <p className="fineprint">আজকের সব কাজ শেষ। নতুন তথ্য দিলে পরের কাজ দেখাবে।</p>
+            )}
           </section>
 
           <Card variant="outlined" className="panel">
-            <div className="today__head">
-              <div>
-                <h2 className="panel__title">খরচের খাতা</h2>
-                <p className="fineprint">মোট খরচ: {toBangla(totalCost)} টাকা (ডেমো)</p>
-              </div>
-              <Button variant="filled" size="s" icon={ICONS.diary} onClick={() => setLedger(true)}>
-                সব দেখুন
-              </Button>
-            </div>
+            <h2 className="panel__title">খরচের খাতা</h2>
+            <p className="fineprint">
+              {expenses.length > 0
+                ? `আপনার লেখা মোট খরচ: ${toBangla(totalCost)} টাকা`
+                : "এখনো কোনো খরচ যোগ করা হয়নি"}
+            </p>
+            <Button variant="filled" size="m" icon={ICONS.plus} onClick={() => setLedger(true)}>
+              খরচ যোগ করুন
+            </Button>
           </Card>
         </>
       )}
 
-      <DemoNote />
-
       <Overlay>
-        <BottomSheet open={ledger} headline="খরচের খাতা (ডেমো)" onClose={() => setLedger(false)}>
+        <BottomSheet open={ledger} headline="খরচের খাতা" onClose={() => setLedger(false)}>
           <div className="sheet-body">
-            <div>
-              {INITIAL_EXPENSES.map((item) => (
-                <div key={item.title} className="ledger__row">
-                  <span>{item.title}</span>
-                  <strong>{toBangla(item.amount)} টাকা</strong>
-                </div>
-              ))}
-              <div className="ledger__row">
-                <strong>মোট</strong>
-                <strong>{toBangla(totalCost)} টাকা</strong>
+            <form
+              className="expense-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                addExpense();
+              }}
+            >
+              <p className="step-label">কী কিনেছেন?</p>
+              <div className="choices" role="group" aria-label="খরচের খাত">
+                {EXPENSE_CATEGORIES.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={`choice ${category === item ? "is-selected" : ""}`}
+                    aria-pressed={category === item}
+                    onClick={() => setCategory(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
+
+              <label className="setup__field">
+                <span className="setup__field-label">টাকার পরিমাণ</span>
+                <input
+                  className="setup__input"
+                  type="text"
+                  inputMode="numeric"
+                  value={amount}
+                  placeholder="যেমন: ৫০০"
+                  onChange={(event) => {
+                    setAmount(event.target.value);
+                    setError("");
+                  }}
+                />
+              </label>
+
+              {error && (
+                <p className="login__error" role="alert">
+                  {error}
+                </p>
+              )}
+
+              <Button variant="filled" size="m" type="button" icon={ICONS.plus} onClick={addExpense}>
+                এই খরচ যোগ করুন
+              </Button>
+            </form>
+
+            <div className="ledger">
+              {expenses.length === 0 ? (
+                <p className="fineprint">যোগ করলে এখানে আপনার খরচের তালিকা দেখাবে।</p>
+              ) : (
+                <>
+                  {expenses.map((item) => (
+                    <div key={item.id} className="ledger__row">
+                      <span>{item.category}</span>
+                      <span className="ledger__amount">
+                        {toBangla(item.amount)} টাকা
+                        <button
+                          type="button"
+                          className="ledger__delete"
+                          aria-label={`${item.category} খরচ মুছুন`}
+                          onClick={() => removeExpense(item.id)}
+                          dangerouslySetInnerHTML={{ __html: ICONS.trash }}
+                        />
+                      </span>
+                    </div>
+                  ))}
+                  <div className="ledger__row ledger__row--total">
+                    <strong>মোট</strong>
+                    <strong>{toBangla(totalCost)} টাকা</strong>
+                  </div>
+                </>
+              )}
             </div>
+
             <p className="fineprint">
-              এটি ডেমো হিসাব। আসল অ্যাপে আপনার প্রতি মৌসুমের খরচ ফোনে অফলাইনে সেভ থাকবে।
+              এই খরচগুলো শুধু আপনার ফোনে সেভ থাকে। কোনো ব্যাংক বা হিসাবের সঙ্গে যুক্ত হয় না।
             </p>
-            <Button variant="text" size="m" onClick={() => setLedger(false)}>
-              বন্ধ করুন
-            </Button>
           </div>
         </BottomSheet>
       </Overlay>
