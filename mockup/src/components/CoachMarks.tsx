@@ -17,9 +17,9 @@ const STEPS: Step[] = [
     side: "below",
   },
   {
-    target: "[data-coach='profile']",
-    title: "এখানে আপনার প্রোফাইল",
-    body: "নাম, জেলা, জমির তথ্য আর লগইন—সব এক জায়গায় দেখুন।",
+    target: "[data-coach='weather']",
+    title: "এখানে ৭ দিনের আবহাওয়া",
+    body: "সামনের সাত দিনের বৃষ্টি আর তাপমাত্রা একসঙ্গে দেখতে এই অংশে চাপুন।",
     side: "below",
   },
   {

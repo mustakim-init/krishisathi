@@ -4,6 +4,7 @@ import { ICONS } from "../icons";
 import type { Screen } from "../nav";
 import { hasFarm, stageFor, tasksForProfile, type FarmProfile } from "../farm";
 import { toBangla } from "../format";
+import { DEMO_WEATHER } from "../weather";
 
 const TILES = [
   {
@@ -12,7 +13,6 @@ const TILES = [
     title: "আমার জমি",
     sub: "অবস্থা, কাজ ও খরচ",
     tone: "tile--tint",
-    coach: undefined,
   },
   {
     screen: "guides",
@@ -20,7 +20,6 @@ const TILES = [
     title: "সঠিক চাষের নিয়ম",
     sub: "অফলাইনেও ব্যবহার করুন",
     tone: "tile--surface",
-    coach: undefined,
   },
   {
     screen: "saved",
@@ -28,15 +27,6 @@ const TILES = [
     title: "সংরক্ষিত তথ্যসমূহ",
     sub: "ফোনেই সংরক্ষিত থাকে",
     tone: "tile--surface",
-    coach: undefined,
-  },
-  {
-    screen: "profile",
-    icon: ICONS.person,
-    title: "আমার প্রোফাইল",
-    sub: "নাম, জেলা ও অ্যাকাউন্ট",
-    tone: "tile--tint",
-    coach: "profile",
   },
 ] as const satisfies ReadonlyArray<{
   screen: Screen;
@@ -44,7 +34,6 @@ const TILES = [
   title: string;
   sub: string;
   tone: string;
-  coach: string | undefined;
 }>;
 
 export default function Home({
@@ -126,7 +115,6 @@ export default function Home({
             key={tile.screen}
             type="button"
             className={`tile ${tile.tone}`}
-            data-coach={tile.coach}
             onClick={() => onGo(tile.screen)}
           >
             <span
@@ -138,6 +126,24 @@ export default function Home({
             <span className="tile__sub">{tile.sub}</span>
           </button>
         ))}
+
+        <button
+          type="button"
+          className="tile tile--weather"
+          data-coach="weather"
+          onClick={() => onGo("weather")}
+        >
+          <span
+            className="tile__icon"
+            aria-hidden="true"
+            dangerouslySetInnerHTML={{ __html: ICONS.cloudSun }}
+          />
+          <span className="tile__now">{toBangla(DEMO_WEATHER.current.temp)}°</span>
+          <span className="tile__title">৭ দিনের আবহাওয়া</span>
+          <span className="tile__sub">
+            {profile.district ? `${profile.district} · ডেমো` : "ডেমো পূর্বাভাস"}
+          </span>
+        </button>
       </div>
 
       <Card variant="filled" className="today">
