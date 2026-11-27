@@ -15,6 +15,7 @@ import type { Auth } from "../auth";
 export default function Profile({
   profile,
   auth,
+  onBack,
   onSetup,
   onLogin,
   onLogout,
@@ -24,6 +25,7 @@ export default function Profile({
 }: {
   profile: FarmProfile;
   auth: Auth | null;
+  onBack: () => void;
   onSetup: () => void;
   onLogin: () => void;
   onLogout: () => void;
@@ -54,7 +56,7 @@ export default function Profile({
 
   return (
     <section className="view">
-      <PhoneHeader title="প্রোফাইল" />
+      <PhoneHeader title="প্রোফাইল" onBack={onBack} />
 
       <Card variant="filled" className="profile-hero">
         <span className="profile-hero__avatar" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.person }} />

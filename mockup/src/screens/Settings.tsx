@@ -26,11 +26,13 @@ const SPEED_OPTIONS: { value: VoiceSpeed; label: string; sub: string }[] = [
 
 export default function Settings({
   profile,
+  onBack,
   textSize,
   onChangeTextSize,
   onSetup,
 }: {
   profile: FarmProfile;
+  onBack: () => void;
   textSize: TextSize;
   onChangeTextSize: (value: TextSize) => void;
   onSetup: () => void;
@@ -52,7 +54,7 @@ export default function Settings({
 
   return (
     <section className="view">
-      <PhoneHeader title="সেটিংস" />
+      <PhoneHeader title="সেটিংস" onBack={onBack} />
 
       <p className="lede">পড়তে বা শুনতে সুবিধা অনুযায়ী এখান থেকে ঠিক করে নিন।</p>
 

@@ -8,11 +8,13 @@ import type { FarmProfile } from "../farm";
 
 export default function Saved({
   profile,
+  onBack,
   onOpen,
   onTalk,
   onProfile,
 }: {
   profile: FarmProfile;
+  onBack: () => void;
   onOpen: (id: string) => void;
   onTalk: () => void;
   onProfile: () => void;
@@ -30,7 +32,7 @@ export default function Saved({
 
   return (
     <section className="view">
-      <PhoneHeader title="সংরক্ষিত তথ্যসমূহ" />
+      <PhoneHeader title="সংরক্ষিত তথ্যসমূহ" onBack={onBack} />
 
       <p className="lede">আপনার কথোপকথন আর পরামর্শ এই ফোনেই সংরক্ষিত থাকে।</p>
 

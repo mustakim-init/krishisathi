@@ -61,13 +61,15 @@ const TOPICS = [
 export default function Guide({
   onGo,
   onTour,
+  onBack,
 }: {
   onGo: (screen: Screen) => void;
   onTour: () => void;
+  onBack: () => void;
 }) {
   return (
     <section className="view">
-      <PhoneHeader title="কীভাবে চালাবেন" />
+      <PhoneHeader title="কীভাবে চালাবেন" onBack={onBack} />
 
       <p className="lede">
         চারটি সহজ ধাপেই পুরো অ্যাপ চলে। কোথাও বুঝতে অসুবিধা হলে এখান থেকে দেখে নিতে পারেন।

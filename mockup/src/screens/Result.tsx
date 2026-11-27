@@ -24,11 +24,13 @@ export default function Result({
   onAsk,
   onHelp,
   onRetake,
+  onBack,
 }: {
   answers: CaseAnswers;
   onAsk: () => void;
   onHelp: () => void;
   onRetake: () => void;
+  onBack: () => void;
 }) {
   const [playing, setPlaying] = useState(false);
 
@@ -41,7 +43,7 @@ export default function Result({
 
   return (
     <section className="view">
-      <PhoneHeader title="ফলাফল" />
+      <PhoneHeader title="ফলাফল" onBack={onBack} />
 
       <div className="verdict">
         <p className="verdict__label">ডেমো ফলাফল</p>

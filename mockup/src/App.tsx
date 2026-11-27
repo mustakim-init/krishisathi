@@ -58,10 +58,31 @@ export default function App() {
   const [setupReturn, setSetupReturn] = useState<SetupReturn>("home");
   const [openConversationId, setOpenConversationId] = useState<string | null>(null);
   const [startWithPhoto, setStartWithPhoto] = useState(false);
+  const [navStack, setNavStack] = useState<Screen[]>([]);
+
+  const replace = (next: Screen) => {
+    setScreen(next);
+    window.history.replaceState(null, "", `#${next}`);
+  };
 
   const go = (next: Screen) => {
-    setScreen(next);
-    history.replaceState(null, "", `#${next}`);
+    if (next === screen) return;
+    // Root tabs are not back targets; every nested screen returns to its opener.
+    if (!(isTab(screen) && isTab(next))) {
+      setNavStack((stack) => [...stack, screen]);
+    }
+    replace(next);
+  };
+
+  const goBack = (fallback: Screen) => {
+    const previous = navStack[navStack.length - 1] ?? fallback;
+    setNavStack((stack) => stack.slice(0, -1));
+    replace(previous);
+  };
+
+  const resetTo = (next: Screen) => {
+    setNavStack([]);
+    replace(next);
   };
 
   const startTour = () => {
@@ -71,24 +92,24 @@ export default function App() {
 
   const openSetup = (from: SetupReturn) => {
     setSetupReturn(from);
-    go("setup");
+    replace("setup");
   };
 
   const finishOnboarding = () => {
     writeFlag(ONBOARDED_KEY);
-    go(auth ? "home" : "login");
+    resetTo(auth ? "home" : "login");
   };
 
   const finishLogin = (next: Auth) => {
     writeAuth(next);
     setAuth(next);
     writeFlag(ONBOARDED_KEY);
-    go("home");
+    resetTo("home");
   };
 
   const skipLogin = () => {
     writeFlag(ONBOARDED_KEY);
-    go("home");
+    resetTo("home");
   };
 
   const logout = () => {
@@ -99,7 +120,7 @@ export default function App() {
   const finishSetup = (next: FarmProfile) => {
     writeProfile(next);
     setProfile(next);
-    go(setupReturn);
+    replace(setupReturn);
   };
 
   const openSavedConversation = (id: string) => {
@@ -130,7 +151,7 @@ export default function App() {
   };
 
   const activeTab = isTab(screen) ? screen : "home";
-  const chrome = screen !== "onboarding" && screen !== "login" && screen !== "setup";
+  const chrome = isTab(screen);
 
   useEffect(() => {
     if (screen !== "home") setTour(false);
@@ -163,7 +184,7 @@ export default function App() {
             <FarmSetup
               initial={profile}
               onDone={finishSetup}
-              onCancel={() => go(setupReturn)}
+              onCancel={() => replace(setupReturn)}
             />
           )}
           {screen === "home" && (
@@ -187,12 +208,13 @@ export default function App() {
               onAsk={() => go("talk")}
               onHelp={() => go("help")}
               onRetake={openPhotoChat}
+              onBack={() => goBack("talk")}
             />
           )}
           {screen === "farm" && (
             <Farm profile={profile} onSetup={() => openSetup("farm")} />
           )}
-          {screen === "guides" && <Guides onTalk={() => go("talk")} />}
+          {screen === "guides" && <Guides onTalk={() => go("talk")} onBack={() => goBack("home")} />}
           {screen === "profile" && (
             <Profile
               profile={profile}
@@ -203,17 +225,19 @@ export default function App() {
               onSaved={() => go("saved")}
               onSettings={() => go("settings")}
               onHelp={() => go("help")}
+              onBack={() => goBack("home")}
             />
           )}
           {screen === "saved" && (
             <Saved
               profile={profile}
+              onBack={() => goBack("home")}
               onOpen={openSavedConversation}
               onTalk={() => go("talk")}
               onProfile={() => go("profile")}
             />
           )}
-          {screen === "guide" && <Guide onGo={go} onTour={startTour} />}
+          {screen === "guide" && <Guide onGo={go} onTour={startTour} onBack={() => goBack("home")} />}
           {screen === "help" && (
             <Help
               profile={profile}
@@ -228,6 +252,7 @@ export default function App() {
               textSize={textSize}
               onChangeTextSize={changeTextSize}
               onSetup={() => openSetup("settings")}
+              onBack={() => goBack("profile")}
             />
           )}
         </main>

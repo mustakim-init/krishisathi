@@ -76,7 +76,7 @@ const STAGES: Stage[] = [
   },
 ];
 
-export default function Guides({ onTalk }: { onTalk: () => void }) {
+export default function Guides({ onTalk, onBack }: { onTalk: () => void; onBack: () => void }) {
   const [open, setOpen] = useState<string | null>("growth");
   const [playing, setPlaying] = useState<string | null>(null);
 
@@ -90,7 +90,7 @@ export default function Guides({ onTalk }: { onTalk: () => void }) {
 
   return (
     <section className="view">
-      <PhoneHeader title="সঠিক চাষের নিয়ম" />
+      <PhoneHeader title="সঠিক চাষের নিয়ম" onBack={onBack} />
 
       <div className="offline">
         <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.offline }} />
