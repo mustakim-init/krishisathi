@@ -1,35 +1,73 @@
 # Business and impact
 
-## Who pays
+## Who pays (B2B2C model)
 
-Farmers use KrishiSathi for free. A smallholder is rarely willing to pay for a digital service, so asking them to would limit who we can reach.
+Smallholder farmers in Bangladesh are rarely willing or able to pay out of pocket for a digital advisory app. Charging farmers directly would exclude the very people who need it most.
 
-The money comes from organisations that already spend on helping farmers:
+**Farmers use KrishiSathi for free.** Revenue comes from organisations that already invest in reaching, supporting, and retaining farmers:
 
-- NGOs and agriculture development programmes that want to reach more farmers with good advice.
-- Cooperatives and agro-input companies that want their farmers to succeed.
-- Mobile operators, who have funded farming services before. The Grameenphone Krishi Sheba case study from GSMA describes exactly that: a service meant to help farmers and keep customers loyal ([GSMA](https://www.gsma.com/mobilefordevelopment/wp-content/uploads/2017/07/gp-krishi-sheba-mobile-agriculture-service-grameenphone-bangladesh.pdf)).
+- **NGOs and agricultural development programmes** that want to scale verified extension advice across thousands of farmers.
+- **Cooperatives and agro-input companies** that want farmers to use inputs accurately and achieve healthier harvests.
+- **Mobile network operators**, who have a proven history of sponsoring farmer services in Bangladesh—for example, Grameenphone's *Krishi Sheba*, documented in a [GSMA case study](https://www.gsma.com/mobilefordevelopment/wp-content/uploads/2017/07/gp-krishi-sheba-mobile-agriculture-service-grameenphone-bangladesh.pdf) as a way to deliver agricultural information while building customer loyalty.
 
-## What we would sell
+```
+[Sponsoring Organisation: NGO / Cooperative / Agro-Company / Operator]
+        │  (Pays annual/monthly per-farmer or program license)
+        ▼
+  [KrishiSathi Platform] ──► (Aggregated, anonymous regional problem insights)
+        │
+        │  (100% Free Bangla voice-first app + offline guides)
+        ▼
+[Smallholder Farmers] ──► (Better diagnosis, timely stage care, lower chemical waste)
+```
 
-1. **Sponsored access.** An organisation pays so that its farmers get the assistant, priced per active farmer.
-2. **Insight dashboards.** Anonymous, combined views of which problems are rising in which areas and seasons. This helps programmes and companies plan.
-3. **Dealer referrals, later.** When a farmer needs an input, the app can point to a nearby dealer. This only works once we have real dealer partners, so it is not part of the first version.
+---
 
-## What it costs to run
+## Revenue streams
 
-The main costs are the AI model, speech and a small amount of hosting. We will measure the real cost per farmer during the build, and we will set prices from those numbers rather than guess now.
+1. **Sponsored access (Primary):** Partner organisations pay a per-active-farmer or program-tier fee so farmers in their network get full access to KrishiSathi.
+2. **Aggregated insight dashboards (Secondary):** Anonymised, region- and season-level trend views (e.g., which rice symptoms or stages are spiking in which districts) to help NGOs, researchers, and input suppliers plan interventions and stock.
+3. **Dealer referrals (Future, post-pilot):** Once verified local dealer partnerships exist, the app can surface nearby registered dealers when a farmer needs recommended inputs, earning a referral commission. This is intentionally excluded from the initial version until real partners are onboarded.
 
-## Growing it
+---
 
-We start with rice because it is the main crop and good public guidance exists. The same approach carries over to other crops and regions by adding verified guidance, not by rebuilding the app. A pilot with one NGO or cooperative is the natural next step after the competition.
+## Cost drivers and unit economics framework
 
-## Impact
+Our primary operating costs are:
+- **Multimodal AI & speech synthesis:** Cost per voice + photo conversation turn.
+- **Lightweight backend / key proxy:** Minimal hosting for API routing and optional phone-number backup.
+- **Knowledge-base curation:** Periodic human review of BRRI/DAE updates.
 
-KrishiSathi supports UN Sustainable Development Goal 2.
+Because offline guides, farm profile, stage calendar, and the expense diary run **100% on-device**, they incur **zero server or AI cost** per use.
 
-**Target 2.4, sustainable and resilient farming.** Getting the diagnosis right the first time should mean fewer unnecessary sprays. We plan to track how often farmers follow the advice and how many applications they say they avoided.
+### Unit economics model (to be calibrated during Phase 2)
 
-**Target 2.3, productivity and income of small farmers.** Acting early on the right problem should reduce crop loss. The cost record in the app lets farmers, and later partners, see the cost of growing a season's crop.
+| Variable | Definition | How we determine it |
+|---|---|---|
+| $N$ | Active farmers per sponsor program | Set per partner contract (e.g., NGO pilot vs. regional cooperative) |
+| $C_{\text{farmer}}$ | Monthly AI + TTS cost per active farmer | Measured in Phase 2 using real request sizes and conversation counts |
+| $P_{\text{sponsor}}$ | Monthly sponsor fee per active farmer | Priced above $C_{\text{farmer}}$ based on measured usage (assumption until pilot pricing is agreed) |
+| **Margin** | $N \times (P_{\text{sponsor}} - C_{\text{farmer}}) - \text{Fixed Hosting}$ | Validated after Phase 2 cost telemetry |
 
-These are the measures we plan to use in a pilot. We are not claiming results before we have run one.
+We will measure actual per-request AI and speech costs during the 10-day build window rather than guessing pricing numbers before running the system.
+
+---
+
+## Path to scale
+
+1. **Phase 1 & 2 (Competition MVP):** Rice-first Android app with verified BRRI/DAE/BARC knowledge base, offline season companion, and Bangla voice-first UX.
+2. **Post-competition Pilot:** Partner with one local NGO or agricultural cooperative to test with smallholder rice farmers, measure real diagnosis follow-through, and validate sponsor pricing.
+3. **Crop & Regional Expansion:** Add maize, potato, jute, and vegetables by curating and reviewing new knowledge-base entries—without rebuilding the core app architecture.
+
+---
+
+## UN SDG alignment and measurable indicators
+
+KrishiSathi directly supports **UN Sustainable Development Goal 2 (Zero Hunger)**:
+
+| SDG Target | How KrishiSathi Contributes | Target Indicators (to measure in a pilot) |
+|---|---|---|
+| **Target 2.4** *(Primary)* — Sustainable food production and resilient agricultural practices | Accurate, grounded diagnosis and ask-back triage reduce guesswork and unnecessary chemical/pesticide spraying, protecting soil, water, and farmer health. | • Share of advised sessions where farmers followed the guidance<br>• Self-reported unnecessary chemical/pesticide applications avoided |
+| **Target 2.3** *(Secondary)* — Double agricultural productivity and incomes of small-scale food producers | Earlier, stage-appropriate action reduces crop loss; the built-in offline expense diary (*খরচের খাতা*) helps farmers track seasonal input costs. | • Seasonal production cost per decimal/shotangsho (from the in-app diary)<br>• Self-reported yield and loss reduction compared to prior season |
+
+*Note: These are target indicators designed for our post-competition pilot; we do not claim measured field impact before running a pilot.*
