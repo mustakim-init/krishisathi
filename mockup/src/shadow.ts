@@ -58,7 +58,10 @@ const PATCHES: { selector: string; marker: string; css: string }[] = [
 ];
 
 /* The scrim is drawn by the style above, so a tap on it has to close the sheet
-   here: the component only wires its own scrim, which the standard sheet hides. */
+   here: the component only wires its own scrim, which the standard sheet hides.
+   A click from a Material button inside the sheet is retargeted out of its own
+   shadow root, so testing event.target against the container wrongly treated
+   "add" and "next" taps as scrim taps. Test the pointer position instead. */
 function closeOnScrimClick(host: Element, root: ShadowRoot) {
   const sheet = root.querySelector<HTMLElement>(".mtrl-bottom-sheet");
   const container = root.querySelector<HTMLElement>(".mtrl-bottom-sheet__container");
@@ -66,7 +69,15 @@ function closeOnScrimClick(host: Element, root: ShadowRoot) {
 
   sheet.dataset.ksClose = "1";
   sheet.addEventListener("click", (event) => {
-    if (container.contains(event.target as Node)) return;
+    // Keyboard activation reports 0,0 and must never close the sheet.
+    if (event.clientX === 0 && event.clientY === 0) return;
+    const rect = container.getBoundingClientRect();
+    const inside =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+    if (inside) return;
     (host as Element & { close?: () => void }).close?.();
   });
 }
