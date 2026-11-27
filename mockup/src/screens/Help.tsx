@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { BottomSheet, Button, Card } from "material/react";
+import { BottomSheet, Button } from "material/react";
+import Card from "../components/Card";
 import { ICONS } from "../icons";
 import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
 import Overlay from "../components/Overlay";
@@ -7,19 +8,19 @@ import Overlay from "../components/Overlay";
 const FAQ = [
   {
     q: "কীভাবে কথা বলব?",
-    a: "হোম পাতায় বড় মাইক বোতামে চাপ দিন। তারপর আপনার সমস্যা বলুন। ডেমোতে কথোপকথনটি আগে থেকে লেখা।",
+    a: "হোমে থাকা বড় মাইক বাটনে চাপ দিন। তারপর নিজের ভাষায় সমস্যা বলুন। ডেমোতে কথোপকথনটি আগে থেকে সেট করা।",
   },
   {
     q: "কীভাবে ছবি দেব?",
-    a: "‘ছবি তুলে দেখান’ পাতায় গিয়ে নমুনা ছবি বেছে নিন। ডেমোতে ক্যামেরা বা গ্যালারি খোলে না, তাই তিনটি আঁকা নমুনা ছবি দেওয়া আছে।",
+    a: "‘ছবি দেখান’ কার্ডে ট্যাপ করে একটি নমুনা ছবি বেছে নিন। ডেমোতে আসল ক্যামেরা খোলে না, তাই তিনটি নমুনা ছবি দেওয়া আছে।",
   },
   {
-    q: "ইন্টারনেট না থাকলে?",
-    a: "চাষের গাইড আর আমার জমি — এই দুটি অংশ অফলাইনেও দেখা যাবে। কথা বলার জন্য ইন্টারনেট লাগবে।",
+    q: "ইন্টারনেট না থাকলে কী চলবে?",
+    a: "চাষের গাইড আর আমার জমি — এই দুটি অংশ অফলাইনেও চলবে। কথা বলার জন্য ইন্টারনেট লাগবে।",
   },
   {
-    q: "উত্তর কি সবসময় ঠিক?",
-    a: "না। এটি একটি ডেমো প্রোটোটাইপ। নিশ্চিত হতে স্থানীয় কৃষি অফিসে যোগাযোগ করুন।",
+    q: "কোনো অ্যাকাউন্ট বা লগইন কি লাগবে?",
+    a: "না। আপনার জমির তথ্য ও আগের উত্তর সরাসরি ফোনেই সেভ থাকবে। কোনো পাসওয়ার্ড বা জিমেইল লাগবে না।",
   },
 ];
 
@@ -41,17 +42,17 @@ export default function Help({
     <section className="view">
       <PhoneHeader title="সাহায্য" />
 
-      <p className="lede">অ্যাপটি কীভাবে চলে, কার সঙ্গে কথা বলবেন আর সাধারণ প্রশ্নের উত্তর — সব এখানে।</p>
+      <p className="lede">অ্যাপটি কীভাবে চালাবেন, কৃষি অফিসের নম্বর আর সাধারণ প্রশ্ন — সব এখানে।</p>
 
       <Card variant="filled" className="panel">
-        <h2 className="panel__title">অ্যাপটি কীভাবে ব্যবহার করবেন</h2>
-        <p>চারটি কাজের ধাপ, কোন বোতাম কী করে আর কোথায় চাপ দিতে হবে — ছবিসহ সহজ ভাষায় দেখে নিন।</p>
+        <h2 className="panel__title">কীভাবে ব্যবহার করবেন</h2>
+        <p>কোন বাটনে কী কাজ হয়, সহজ ভাষায় ধাপে ধাপে দেখে নিন।</p>
         <div className="contact__actions">
           <Button variant="filled" size="m" icon={ICONS.book} onClick={onGuide}>
             ধাপে ধাপে দেখুন
           </Button>
           <Button variant="outlined" size="m" icon={ICONS.sparkle} onClick={onTour}>
-            হোম পাতায় দেখান
+            হোমে দেখান
           </Button>
         </div>
       </Card>
@@ -60,22 +61,15 @@ export default function Help({
         <div className="contact__head">
           <div>
             <p className="contact__name">সেটিংস</p>
-            <p className="contact__line">লেখার আকার, শোনার গতি আর মাইকের কম্পন</p>
+            <p className="contact__line">লেখার সাইজ, বলার গতি আর ভাইব্রেশন</p>
           </div>
-          <span
-            className="settings-icon"
-            aria-hidden="true"
-            dangerouslySetInnerHTML={{ __html: ICONS.gear }}
-          />
-        </div>
-        <div className="contact__actions">
-          <Button variant="outlined" size="m" icon={ICONS.gear} onClick={onSettings}>
-            সেটিংস খুলুন
+          <Button variant="outlined" size="s" icon={ICONS.gear} onClick={onSettings}>
+            খুলুন
           </Button>
         </div>
       </Card>
 
-      <Card variant="filled" className="panel contact">
+      <Card variant="filled" className="panel">
         <div className="contact__head">
           <div>
             <p className="contact__name">উপজেলা কৃষি অফিস</p>
@@ -137,14 +131,14 @@ export default function Help({
       <Overlay>
         <BottomSheet
           open={sheet !== null}
-          headline={sheet === "call" ? "ফোন করা যাবে না" : "কলব্যাক অনুরোধ"}
+          headline={sheet === "call" ? "ডেমো কল" : "কলব্যাক চাই"}
           onClose={() => setSheet(null)}
         >
           <div className="sheet-body">
             <p>
               {sheet === "call"
-                ? "এটি ডেমো প্রোটোটাইপ। ডেমোতে সত্যিকারের ফোন কল হয় না।"
-                : "ডেমোতে আপনার অনুরোধ জমা হয়েছে বলে দেখানো হচ্ছে। প্রকৃত অনুরোধ কোথাও পাঠানো হয়নি।"}
+                ? "এটি একটি ডেমো প্রোটোটাইপ। এখান থেকে সত্যিকারের ফোন কল করা যায় না।"
+                : "ডেমোতে আপনার অনুরোধ দেখানো হয়েছে। আসল অ্যাপে স্থানীয় কৃষি অফিসের সাথে যোগাযোগ যুক্ত হবে।"}
             </p>
             <Button variant="text" size="m" onClick={() => setSheet(null)}>
               বুঝেছি

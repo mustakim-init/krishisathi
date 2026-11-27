@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Button, Card } from "material/react";
+import { Button } from "material/react";
+import Card from "../components/Card";
 import { ICONS } from "../icons";
 import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
 import { toBangla } from "../format";
+import { playbackMs } from "../settings";
 
 type Stage = {
   id: string;
@@ -15,38 +17,62 @@ const STAGES: Stage[] = [
   {
     id: "seedbed",
     title: "বীজতলা",
-    summary: "সমান জমি বেছে নিন আর পরিচ্ছন্ন পানি ব্যবহার করুন।",
-    steps: ["সমান উচ্চতার জমি বেছে নিন।", "পরিষ্কার পানি দিয়ে জমি ভিজিয়ে রাখুন।", "চারাগুলো সমানভাবে ছড়িয়ে দিন।"],
+    summary: "সমান জমি বেছে নিন আর পরিষ্কার পানি ব্যবহার করুন।",
+    steps: [
+      "সমান উচ্চতার জমি বেছে নিন।",
+      "পরিষ্কার পানি দিয়ে জমি ভিজিয়ে রাখুন।",
+      "চারাগুলো সমানভাবে ছড়িয়ে দিন।",
+    ],
   },
   {
     id: "planting",
     title: "রোপণ",
-    summary: "ঠিক বয়সের চারা সমান দূরত্বে লাগান।",
-    steps: ["চারা ঠিক বয়সে তুলুন।", "সারি মিলিয়ে সমান দূরত্বে লাগান।", "লাগানোর পর হালকা পানি দিন।"],
+    summary: "ঠিক বয়সের চারা সমান দূরত্বে লাগান।",
+    steps: [
+      "চারা ঠিক বয়সে তুলুন।",
+      "সারি মিলিয়ে সমান দূরত্বে লাগান।",
+      "লাগানোর পর হালকা পানি দিন।",
+    ],
   },
   {
     id: "growth",
     title: "বৃদ্ধি",
-    summary: "নিয়মিত জমি দেখে আসুন, বদল খেয়াল করুন।",
-    steps: ["নিয়মিত জমি দেখে আসুন।", "পাতার রঙ বদলাচ্ছে কি না খেয়াল করুন।", "জমিতে বাড়তি পানি জমতে দেবেন না।"],
+    summary: "নিয়মিত জমি দেখে আসুন, কোনো বদল হলে খেয়াল করুন।",
+    steps: [
+      "সপ্তাহে অন্তত একবার জমি ঘুরে দেখুন।",
+      "পাতার রঙ বদলাচ্ছে কি না খেয়াল করুন।",
+      "জমিতে বাড়তি পানি জমতে দেবেন না।",
+    ],
   },
   {
     id: "flowering",
     title: "ফুল আসা",
-    summary: "এই সময়ে জমি শুকিয়ে যেতে দেবেন না।",
-    steps: ["জমি শুকিয়ে যেতে দেবেন না।", "পোকা দেখলে পাতা পরীক্ষা করুন।", "সমস্যা দেখলে কৃষি অফিসে জানান।"],
+    summary: "এই সময়ে জমি শুকিয়ে যেতে দেবেন না।",
+    steps: [
+      "জমি শুকিয়ে যেতে দেবেন না।",
+      "পোকা দেখলে পাতা পরীক্ষা করুন।",
+      "সমস্যা দেখলে কৃষি অফিসে জানান।",
+    ],
   },
   {
     id: "ripening",
     title: "পাকা",
-    summary: "ধান পাকলে দানা শক্ত হয়, রঙ হলদে হয়।",
-    steps: ["দানা শক্ত হয়েছে কি না দেখুন।", "কাটার আগে আবহাওয়া দেখুন।", "পাকা ধান বেশি দিন খেতে ফেলে রাখবেন না।"],
+    summary: "ধান পাকলে দানা শক্ত হয়, রঙ হলদে হয়।",
+    steps: [
+      "দানা শক্ত হয়েছে কি না দেখুন।",
+      "কাটার আগে আবহাওয়া দেখে নিন।",
+      "পাকা ধান বেশি দিন খেতে ফেলে রাখবেন না।",
+    ],
   },
   {
     id: "harvest",
     title: "কাটা",
     summary: "শুকনো দিনে কাটুন, তারপর ভালোভাবে শুকান।",
-    steps: ["শুকনো দিনে ধান কাটুন।", "কাটা ধান ভালোভাবে শুকান।", "শুকনো জায়গায় ধান রাখুন।"],
+    steps: [
+      "শুকনো দিনে ধান কাটুন।",
+      "কাটা ধান ভালোভাবে শুকান।",
+      "শুকনো জায়গায় ধান সংরক্ষণ করুন।",
+    ],
   },
 ];
 
@@ -56,7 +82,10 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
 
   const listen = (id: string) => {
     setPlaying(id);
-    window.setTimeout(() => setPlaying((current) => (current === id ? null : current)), 1800);
+    window.setTimeout(
+      () => setPlaying((current) => (current === id ? null : current)),
+      playbackMs(1800),
+    );
   };
 
   return (
@@ -64,23 +93,22 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
       <PhoneHeader title="চাষের গাইড" onBack={onBack} />
 
       <div className="offline">
-        <span className="offline__icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.offline }} />
+        <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.offline }} />
         <div>
           <p className="offline__title">অফলাইনেও দেখা যাবে</p>
-          <p className="offline__sub">ইন্টারনেট না থাকলেও এই গাইডগুলো পড়া যাবে।</p>
+          <p className="offline__sub">ইন্টারনেট না থাকলেও এই গাইডগুলো পড়া ও শোনা যাবে।</p>
         </div>
       </div>
 
       <p className="lede">
-        ধানের জীবন শুরু থেকে শেষ পর্যন্ত ছয়টি ধাপে ভাগ করা। যেকোনো ধাপে চাপ দিলে তিনটি ছোট কাজ দেখতে
-        পাবেন।
+        ধান চাষের ছয়টি ধাপ নিচে দেওয়া আছে। যেকোনো ধাপে চাপ দিলে তিনটি সহজ কাজ দেখতে পাবেন।
       </p>
 
       <div className="stages">
         {STAGES.map((stage, index) => {
           const isOpen = open === stage.id;
           return (
-            <Card key={stage.id} variant="filled" className="stage">
+            <Card key={stage.id} variant="filled">
               <button
                 type="button"
                 className="stage__toggle"
@@ -94,7 +122,11 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
                   <span className="stage__title">{stage.title}</span>
                   <span className="stage__summary">{stage.summary}</span>
                 </span>
-                <span className={`stage__chevron ${isOpen ? "is-open" : ""}`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.chevronDown }} />
+                <span
+                  className={`stage__chevron ${isOpen ? "is-open" : ""}`}
+                  aria-hidden="true"
+                  dangerouslySetInnerHTML={{ __html: ICONS.chevronDown }}
+                />
               </button>
 
               {isOpen && (
@@ -105,7 +137,7 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
                     ))}
                   </ol>
                   <Button variant="text" size="s" icon={ICONS.volume} onClick={() => listen(stage.id)}>
-                    {playing === stage.id ? "বাজছে..." : "শুনুন"}
+                    {playing === stage.id ? "শোনানো হচ্ছে..." : "শুনুন"}
                   </Button>
                 </div>
               )}
@@ -115,10 +147,10 @@ export default function Guides({ onBack, onDoctor }: { onBack: () => void; onDoc
       </div>
 
       <Card variant="outlined" className="panel panel--cta">
-        <h2 className="panel__title">পাতায় সমস্যা দেখছেন?</h2>
-        <p>ছবি তুলে দেখান, আমরা সম্ভাব্য কারণ বলব।</p>
+        <h2 className="panel__title">পাতায় সমস্যা দেখছেন?</h2>
+        <p>ছবি তুলে দেখান, অ্যাপ সম্ভাব্য কারণ বলে দেবে।</p>
         <Button variant="filled" size="m" icon={ICONS.camera} onClick={onDoctor}>
-          ছবি তুলে দেখান
+          ছবি দেখান
         </Button>
       </Card>
 

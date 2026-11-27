@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { Button, Card } from "material/react";
+import { Button } from "material/react";
+import Card from "../components/Card";
 import { ICONS } from "../icons";
 import { DemoNote, PhoneHeader } from "../components/PhoneHeader";
 import type { CaseAnswers } from "../data/demo";
 import { playbackMs } from "../settings";
 
 const SYMPTOMS = [
-  "পাতায় গোলাকার বাদামি দাগ",
+  "পাতায় গোলাকার বাদামি দাগ",
   "দাগের চারপাশে হালকা হলদে রঙ",
   "জমিতে পানি জমে আছে",
 ];
 
 const STEPS = [
-  "জমি থেকে বাড়তি পানি সরিয়ে দিন।",
-  "আক্রান্ত পাতাগুলো তুলে জমির পাশে ফেলে দিন।",
+  "জমি থেকে বাড়তি পানি সরিয়ে দিন।",
+  "বেশি আক্রান্ত পাতাগুলো তুলে ফেলুন।",
   "জমিতে আলো-বাতাস ঢোকার ব্যবস্থা রাখুন।",
-  "পাতা দেখিয়ে কৃষি অফিসে নিশ্চিত করুন।",
+  "নিশ্চিত হতে পাতা নিয়ে কৃষি অফিসে দেখান।",
 ];
 
 export default function Result({
@@ -47,14 +48,14 @@ export default function Result({
       <div className="verdict">
         <p className="verdict__label">ডেমো ফলাফল</p>
         <h2 className="verdict__title">সম্ভাব্য সমস্যা: বাদামি দাগ রোগ</h2>
-        <span className="pill">সম্ভাবনা মাঝারি</span>
+        <span className="pill">সম্ভাবনা: মাঝারি</span>
         <p className="verdict__body">
           {answers.standingWater === "না"
-            ? "পাতায় বাদামি দাগ আর গাছের বয়স মিলে যাচ্ছে। জমিতে পানি জমে না থাকলেও দাগের কারণ একই হতে পারে, তাই নিচের ধাপগুলো দেখুন।"
-            : "পাতায় বাদামি দাগ আর জমিতে পানি জমা — দুটোই মিলে যাচ্ছে। নিচের ধাপগুলো দেখুন, তারপর নিশ্চিত হতে কৃষি অফিসের সঙ্গে কথা বলুন।"}
+            ? "পাতায় বাদামি দাগ আর গাছের বয়স মিলে যাচ্ছে। জমিতে পানি জমে না থাকলেও একই কারণে এমন হতে পারে।"
+            : "পাতায় বাদামি দাগ আর জমিতে পানি জমা — দুটোই মিলে যাচ্ছে। নিচের কাজগুলো করুন, আর নিশ্চিত হতে কৃষি অফিসে কথা বলুন।"}
         </p>
         <Button variant="filled" size="m" icon={ICONS.volume} onClick={play}>
-          {playing ? "বাজছে..." : "পুরো উত্তরটি শুনুন"}
+          {playing ? "শোনানো হচ্ছে..." : "পুরো উত্তর শুনুন"}
         </Button>
       </div>
 
@@ -66,7 +67,7 @@ export default function Result({
             <dd>বাদামি গোল দাগ</dd>
           </div>
           <div className="reasons__row">
-            <dt>গাছের বয়স</dt>
+            <dt>গাছের বয়স</dt>
             <dd>{answers.age}</dd>
           </div>
           <div className="reasons__row">
@@ -74,9 +75,6 @@ export default function Result({
             <dd>{water}</dd>
           </div>
         </dl>
-        <p className="fineprint">
-          এই তিনটি উত্তর মিলে যাওয়ায় ফলাফল দেখানো হয়েছে। একটি না মিললে অ্যাপ আরও প্রশ্ন করত।
-        </p>
       </Card>
 
       <Card variant="filled" className="panel">
@@ -102,9 +100,8 @@ export default function Result({
 
       <Card variant="outlined" className="panel panel--caution">
         <h2 className="panel__title">সতর্কতা</h2>
-        <p>এটি ডেমো ফলাফল, নিশ্চিত রোগ নির্ণয় নয়।</p>
-        <p>কোনো ওষুধ ব্যবহারের আগে স্থানীয় কৃষি অফিসের পরামর্শ নিন।</p>
-        <p className="panel__strong">নিশ্চিত না হলে স্থানীয় কৃষি অফিসে যোগাযোগ করুন।</p>
+        <p>এটি ডেমো ফলাফল, চূড়ান্ত রোগ নির্ণয় নয়।</p>
+        <p className="panel__strong">কোনো ওষুধ দেওয়ার আগে স্থানীয় কৃষি অফিসের পরামর্শ নিন।</p>
       </Card>
 
       <div className="actions">
@@ -122,7 +119,7 @@ export default function Result({
         </Button>
       </div>
 
-      <p className="fineprint saved-note">এই উত্তর ‘সেভ করা উত্তর’-এ রাখা হয়েছে, অফলাইনেও পড়া যাবে।</p>
+      <p className="fineprint saved-note">এই উত্তর আপনার ফোনে সেভ করা আছে, অফলাইনেও দেখা যাবে।</p>
 
       <DemoNote />
     </section>
