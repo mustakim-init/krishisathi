@@ -7,6 +7,7 @@ export type Screen =
   | "setup"
   | "profile"
   | "saved"
+  | "weather"
   | "result"
   | "guides"
   | "guide"
@@ -25,6 +26,7 @@ export const SCREENS: readonly Screen[] = [
   "guides",
   "profile",
   "saved",
+  "weather",
   "help",
   "guide",
   "settings",

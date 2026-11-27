@@ -20,6 +20,7 @@ import Settings from "./screens/Settings";
 import FarmSetup from "./screens/FarmSetup";
 import Profile from "./screens/Profile";
 import Saved from "./screens/Saved";
+import Weather from "./screens/Weather";
 
 const ONBOARDED_KEY = "krishisathi.onboarded";
 const TOUR_KEY = "krishisathi.tour.done";
@@ -236,6 +237,9 @@ export default function App() {
               onTalk={() => go("talk")}
               onProfile={() => go("profile")}
             />
+          )}
+          {screen === "weather" && (
+            <Weather profile={profile} onBack={() => goBack("home")} />
           )}
           {screen === "guide" && <Guide onGo={go} onTour={startTour} onBack={() => goBack("home")} />}
           {screen === "help" && (

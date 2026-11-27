@@ -50,3 +50,9 @@ export function formatDay(timestamp: number): string {
   if (days === 1) return "গতকাল";
   return `${toBangla(then.getDate())} ${MONTHS[then.getMonth()]}`;
 }
+
+/** Calendar date for headers and forecasts, including future days. */
+export function formatDate(timestamp: number): string {
+  const date = new Date(timestamp);
+  return `${toBangla(date.getDate())} ${MONTHS[date.getMonth()]}`;
+}
