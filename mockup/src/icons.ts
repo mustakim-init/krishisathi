@@ -24,7 +24,7 @@ export const ICONS = {
   help: wrap(
     `<circle cx="12" cy="12" r="9"/><path d="M9.4 9.2a2.7 2.7 0 1 1 3.6 2.5c-.7.3-1 .9-1 1.6v.4"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/>`,
   ),
-  back: wrap(`<path d="M15 5l-7 7 7 7"/>`),
+
   chevron: wrap(`<path d="M9 5l7 7-7 7"/>`),
   volume: wrap(
     `<path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>`,
