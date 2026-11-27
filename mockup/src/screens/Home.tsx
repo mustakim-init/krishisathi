@@ -1,35 +1,42 @@
-import { Button, Card, Fab } from "material/react";
+import { Button, Fab } from "material/react";
+import Card from "../components/Card";
 import { ICONS } from "../icons";
 import { DemoNote } from "../components/PhoneHeader";
 import type { Screen } from "../nav";
+import { greetingName, hasFarm, stageFor, tasksForProfile, type FarmProfile } from "../farm";
+import { toBangla } from "../format";
 
-const ACTIONS = [
+const TILES = [
   {
     screen: "doctor",
     icon: ICONS.camera,
-    title: "ছবি তুলে দেখান",
-    sub: "পাতার ছবি দিয়ে সম্ভাব্য সমস্যা জানুন",
+    title: "ছবি দেখান",
+    sub: "পাতার ছবি দিয়ে জানুন",
+    tone: "tile--tint",
     coach: "camera",
   },
   {
     screen: "farm",
     icon: ICONS.sprout,
     title: "আমার জমি",
-    sub: "কাজ, সেচ আর খরচের হিসাব",
+    sub: "অবস্থা, কাজ ও হিসাব",
+    tone: "tile--tint",
     coach: undefined,
   },
   {
     screen: "guides",
     icon: ICONS.book,
     title: "চাষের গাইড",
-    sub: "ধাপে ধাপে সহজ পরামর্শ",
+    sub: "অফলাইনেও চলবে",
+    tone: "tile--surface",
     coach: undefined,
   },
   {
     screen: "result",
     icon: ICONS.diary,
-    title: "সেভ করা উত্তর",
-    sub: "আগের ফলাফল আবার পড়ুন বা শুনুন",
+    title: "আগের উত্তর",
+    sub: "সেভ করা পরামর্শ",
+    tone: "tile--surface",
     coach: undefined,
   },
 ] as const satisfies ReadonlyArray<{
@@ -37,100 +44,122 @@ const ACTIONS = [
   icon: string;
   title: string;
   sub: string;
+  tone: string;
   coach: string | undefined;
 }>;
 
-export default function Home({ onGo }: { onGo: (screen: Screen) => void }) {
+export default function Home({
+  profile,
+  onGo,
+  onSetup,
+}: {
+  profile: FarmProfile;
+  onGo: (screen: Screen) => void;
+  onSetup: () => void;
+}) {
+  const configured = hasFarm(profile);
+  const days = profile.plantedDays;
+  const stage =
+    profile.status === "preparing"
+      ? { label: "জমি তৈরি", percent: 5 }
+      : days !== null
+        ? stageFor(days)
+        : null;
+  const previewTasks = configured ? tasksForProfile(profile).slice(0, 2) : [];
+
   return (
     <section className="view">
-      <header className="home__header">
+      <header className="home__topbar">
         <div>
-          <p className="home__eyebrow">আপনার খামার</p>
-          <h1 className="home__greeting">রহিম মিয়া</h1>
+          <p className="home__eyebrow">
+            {profile.district ? `${profile.district} · ডেমো` : "আপনার খামার"}
+          </p>
+          <h1 className="home__greeting">স্বাগতম, {greetingName(profile)}</h1>
         </div>
-        <div className="home__weather">
-          <span
-            className="home__weather-icon"
-            aria-hidden="true"
-            dangerouslySetInnerHTML={{ __html: ICONS.sun }}
+        <div className="home__top-actions">
+          <div className="home__weather" aria-label="আজকের আবহাওয়া ৩২ ডিগ্রি রোদ">
+            <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS.sun }} />
+            <span>৩২°</span>
+          </div>
+          <button
+            type="button"
+            className="home__icon-btn"
+            aria-label="সেটিংস"
+            onClick={() => onGo("settings")}
+            dangerouslySetInnerHTML={{ __html: ICONS.gear }}
           />
-          <span className="home__weather-text">
-            <strong className="home__weather-temp">৩২°</strong>
-            <span className="home__weather-label">রোদ</span>
-          </span>
         </div>
       </header>
 
-      <Card variant="filled" className="ask">
-        <div className="ask__mic" data-coach="mic">
+      <Card variant="filled" className="hero-ask">
+        <div className="hero-ask__mic" data-coach="mic">
+          <span className="hero-ask__ring" aria-hidden="true" />
           <Fab
             variant="primary"
             size="large"
             icon={ICONS.mic}
-            ariaLabel="কথা বলা শুরু করুন"
+            ariaLabel="কথা বলুন"
             onClick={() => onGo("talk")}
           />
         </div>
-        <h2 className="ask__title">সমস্যা আছে? কথা বলুন</h2>
-        <p className="ask__hint">নিজের ভাষায় বলুন। অ্যাপ প্রশ্ন করে বুঝে নেবে।</p>
-        <p className="ask__example">“আমার ধানের পাতায় বাদামি দাগ দেখা যাচ্ছে।”</p>
+        <h2 className="hero-ask__title">সমস্যা আছে? কথা বলুন</h2>
+        <p className="hero-ask__hint">নিজের ভাষায় বলুন, অ্যাপ শুনে সমাধান দেবে</p>
         <Button variant="filled" size="m" onClick={() => onGo("talk")}>
-          কথা বলা শুরু করুন
+          মাইক চালু করুন
         </Button>
       </Card>
 
-      <div className="actions-list">
-        {ACTIONS.map((action) => (
+      <div className="tile-grid">
+        {TILES.map((tile) => (
           <button
-            key={action.screen}
+            key={tile.screen}
             type="button"
-            className="action-row"
-            data-coach={action.coach}
-            onClick={() => onGo(action.screen)}
+            className={`tile ${tile.tone}`}
+            data-coach={tile.coach}
+            onClick={() => onGo(tile.screen)}
           >
             <span
-              className="action-row__icon"
+              className="tile__icon"
               aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: action.icon }}
+              dangerouslySetInnerHTML={{ __html: tile.icon }}
             />
-            <span className="action-row__text">
-              <span className="action-row__title">{action.title}</span>
-              <span className="action-row__sub">{action.sub}</span>
-            </span>
-            <span
-              className="action-row__chevron"
-              aria-hidden="true"
-              dangerouslySetInnerHTML={{ __html: ICONS.chevron }}
-            />
+            <span className="tile__title">{tile.title}</span>
+            <span className="tile__sub">{tile.sub}</span>
           </button>
         ))}
       </div>
 
       <Card variant="filled" className="today">
         <div className="today__head">
-          <span
-            className="today__icon"
-            aria-hidden="true"
-            dangerouslySetInnerHTML={{ __html: ICONS.check }}
-          />
           <div>
             <p className="today__title">আজকের কাজ</p>
-            <p className="today__sub">ধান এখন বৃদ্ধি ধাপে · ৪৫ দিন</p>
+            <p className="today__sub">
+              {configured && stage
+                ? profile.status === "preparing"
+                  ? "জমি তৈরির ধাপে আছেন"
+                  : days !== null
+                    ? `ধান এখন ${stage.label} ধাপে · ${toBangla(days)} দিন`
+                    : `ধান এখন ${stage.label} ধাপে`
+                : "জমির তথ্য দিলে আজকের কাজ দেখাবে"}
+            </p>
           </div>
+          {stage && <span className="pill">{stage.label}</span>}
         </div>
-        <ul className="tick-list">
-          <li>
-            <span className="tick-list__dot" aria-hidden="true" />
-            জমিতে পানি জমে আছে কি না দেখুন
-          </li>
-          <li>
-            <span className="tick-list__dot" aria-hidden="true" />
-            পাতার রঙ বদলাচ্ছে কি না খেয়াল করুন
-          </li>
-        </ul>
-        <Button variant="text" size="m" onClick={() => onGo("farm")}>
-          সব কাজ দেখুন
-        </Button>
+
+        {configured ? (
+          <ul className="tick-list">
+            {previewTasks.map((task) => (
+              <li key={task}>
+                <span className="tick-list__dot" aria-hidden="true" />
+                {task}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Button variant="outlined" size="m" onClick={onSetup}>
+            জমির তথ্য দিন
+          </Button>
+        )}
       </Card>
 
       <DemoNote />

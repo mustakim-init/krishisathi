@@ -4,6 +4,7 @@ import { ICONS } from "./icons";
 import { isTab, SCREENS, type Screen } from "./nav";
 import { readTextSize, writeTextSize, type TextSize } from "./settings";
 import { DEFAULT_ANSWERS, type CaseAnswers } from "./data/demo";
+import { readProfile, writeProfile, type FarmProfile } from "./farm";
 import CoachMarks from "./components/CoachMarks";
 import Home from "./screens/Home";
 import Onboarding from "./screens/Onboarding";
@@ -15,6 +16,7 @@ import Farm from "./screens/Farm";
 import Guides from "./screens/Guides";
 import Help from "./screens/Help";
 import Settings from "./screens/Settings";
+import FarmSetup from "./screens/FarmSetup";
 
 const ONBOARDED_KEY = "krishisathi.onboarded";
 const TOUR_KEY = "krishisathi.tour.done";
@@ -35,7 +37,6 @@ function writeFlag(key: string): void {
   }
 }
 
-/** Deep link support: #home opens the home screen, useful for review and QA. */
 function initialScreen(): Screen {
   const hash = window.location.hash.slice(1) as Screen;
   if (SCREENS.includes(hash)) return hash;
@@ -47,6 +48,8 @@ export default function App() {
   const [tour, setTour] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(readTextSize);
   const [answers, setAnswers] = useState<CaseAnswers>(DEFAULT_ANSWERS);
+  const [profile, setProfile] = useState<FarmProfile>(readProfile);
+  const [setupReturn, setSetupReturn] = useState<"home" | "farm" | "settings">("home");
 
   const go = (next: Screen) => {
     setScreen(next);
@@ -58,10 +61,20 @@ export default function App() {
     setTour(true);
   };
 
+  const openSetup = (from: typeof setupReturn) => {
+    setSetupReturn(from);
+    go("setup");
+  };
+
   const finishOnboarding = () => {
     writeFlag(ONBOARDED_KEY);
-    if (readFlag(TOUR_KEY)) go("home");
-    else startTour();
+    go("home");
+  };
+
+  const finishSetup = (next: FarmProfile) => {
+    writeProfile(next);
+    setProfile(next);
+    go(setupReturn);
   };
 
   const endTour = () => {
@@ -99,9 +112,14 @@ export default function App() {
         </div>
 
         <main className="views">
-          {screen === "onboarding" && <Onboarding onFinish={finishOnboarding} />}
-          {screen === "home" && <Home onGo={go} />}
-          {screen === "talk" && <Talk onResult={() => go("result")} />}
+          {screen === "onboarding" && (
+            <Onboarding onFinish={finishOnboarding} onGuide={() => go("guide")} />
+          )}
+          {screen === "setup" && <FarmSetup initial={profile} onDone={finishSetup} />}
+          {screen === "home" && (
+            <Home profile={profile} onGo={go} onSetup={() => openSetup("home")} />
+          )}
+          {screen === "talk" && <Talk onResult={() => go("result")} onPhoto={() => go("doctor")} />}
           {screen === "doctor" && (
             <Doctor
               onBack={() => go("home")}
@@ -120,18 +138,26 @@ export default function App() {
               onRetake={() => go("doctor")}
             />
           )}
-          {screen === "farm" && <Farm onBack={() => go("home")} />}
+          {screen === "farm" && (
+            <Farm profile={profile} onBack={() => go("home")} onSetup={() => openSetup("farm")} />
+          )}
           {screen === "guides" && <Guides onBack={() => go("home")} onDoctor={() => go("doctor")} />}
           {screen === "guide" && <Guide onBack={() => go("home")} onGo={go} onTour={startTour} />}
           {screen === "help" && (
             <Help onGuide={() => go("guide")} onTour={startTour} onSettings={() => go("settings")} />
           )}
           {screen === "settings" && (
-            <Settings textSize={textSize} onChangeTextSize={changeTextSize} onBack={() => go("help")} />
+            <Settings
+              profile={profile}
+              textSize={textSize}
+              onChangeTextSize={changeTextSize}
+              onSetup={() => openSetup("settings")}
+              onBack={() => go("help")}
+            />
           )}
         </main>
 
-        {screen !== "onboarding" && (
+        {screen !== "onboarding" && screen !== "setup" && (
           <div className="tabbar" data-coach="tabs">
             <NavigationBar
               value={activeTab}

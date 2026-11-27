@@ -1,11 +1,20 @@
 export type Tab = "home" | "talk" | "farm" | "help";
 
-export type Screen = "onboarding" | Tab | "doctor" | "result" | "guides" | "guide" | "settings";
+export type Screen =
+  | "onboarding"
+  | Tab
+  | "setup"
+  | "doctor"
+  | "result"
+  | "guides"
+  | "guide"
+  | "settings";
 
 export const TAB_SCREENS: readonly Tab[] = ["home", "talk", "farm", "help"];
 
 export const SCREENS: readonly Screen[] = [
   "onboarding",
+  "setup",
   "home",
   "talk",
   "doctor",
